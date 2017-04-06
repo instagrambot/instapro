@@ -5,13 +5,13 @@ import getpass
 import warnings
 from ..user import User
 
-USERS_FOLDER_NAME = 'users/'
+from .. import config
 
 
 def get_all_users():
-    if not os.path.exists(USERS_FOLDER_NAME):
+    if not os.path.exists(config.USERS_FOLDER_NAME):
         return []
-    return [user[:-5] for user in os.listdir(USERS_FOLDER_NAME)]
+    return [user[:-5] for user in os.listdir(config.USERS_FOLDER_NAME) if user[-5:] == ".user"]
 
 
 def add_credentials(username=None, password=None):
@@ -53,7 +53,8 @@ def get_credentials(username=None, password=None):
             usr.save()
             return usr
         else:
-            warnings.warn("User not found in base. Please provide the password.")
+            warnings.warn(
+                "User not found in base. Please provide credentials.")
     return choose_user_dialogue()
 
 
