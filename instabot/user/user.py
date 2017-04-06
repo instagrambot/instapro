@@ -6,7 +6,7 @@ import json
 
 from enum import IntEnum
 
-from . import config
+from .. import config
 
 
 class Dotdict(dict):
@@ -57,6 +57,16 @@ class User(object):
         else:
             warnings.warn("No user found")
             return None
+
+    @classmethod
+    def load_all(cls):
+        users = []
+        for user_path in os.listdir(config.USERS_FOLDER_NAME):
+            if user_path[-5:] == ".user":
+                username = user_path[:-5]
+                users.append(User.load(username))
+        return users
+
 
     @staticmethod
     def delete(username):
