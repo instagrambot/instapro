@@ -12,6 +12,8 @@ def follow(self, user_id):
         delay.follow_delay(self)
         if super(self.__class__, self).follow(user_id):
             self.User.counters.follows += 1
+            # add this user_id to self.User.following
+            # also remove in unfollow
             return True
     else:
         self.logger.info("Out of follows for today.")
@@ -21,6 +23,8 @@ def follow(self, user_id):
 def follow_users(self, user_ids):
     broken_items = []
     self.logger.info("Going to follow %d users." % len(user_ids))
+    user_ids = list(set(user_ids) - set(self.User.following))
+    self.logger.info("You are not follow %d of them" % len(user_ids))
     for user_id in tqdm(user_ids):
         if not self.follow(user_id):
             delay.error_delay(self)

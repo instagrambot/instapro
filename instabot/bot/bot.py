@@ -152,6 +152,8 @@ class Bot(API):
     def prepare(self):
         signal.signal(signal.SIGTERM, self.logout)
         atexit.register(self.logout)
+        if self.User.following == []:
+            self.User.following = self.get_user_following(self.User.user_id)
         self.User.whitelist = list(
             filter(None, map(self.convert_to_user_id, self.User.whitelist)))
         self.User.blacklist = list(
