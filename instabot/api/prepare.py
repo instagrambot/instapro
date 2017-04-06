@@ -18,7 +18,7 @@ def add_credentials(username=None, password=None):
     if username is None or password is None:
         print("Enter your login: ")
         username = str(sys.stdin.readline().strip())
-        print("Enter your password: ")
+        print("Enter your password: (you won't see it)")
         password = getpass.getpass()
     User(username, password).save()
 
