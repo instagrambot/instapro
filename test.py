@@ -1,8 +1,6 @@
 import unittest
 import logging
-from instabot import User
-from instabot import API
-from instabot import Bot
+from instabot import User, API, Bot, Parser
 
 
 class TestUser(unittest.TestCase):
@@ -34,6 +32,10 @@ class TestUser(unittest.TestCase):
         self.assertEqual(bot.convert_to_user_id("ohld"), "352300017")
         self.assertEqual(reqs + 1, bot.User.counters.requests)
         bot.User.save()
+
+    def test_parser(self):
+        prs = Parser()
+        self.assertTrue(len(prs.users) > 0)
 
 def reset_user():
     User.delete("instabotproject")
