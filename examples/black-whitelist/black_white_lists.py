@@ -27,11 +27,9 @@ parser.add_argument('-p', type=str, help="password")
 parser.add_argument('-proxy', type=str, help="proxy")
 args = parser.parse_args()
 
-bot = Bot(whitelist="whitelist.txt",
-          blacklist="blacklist.txt")
 
-bot.login(username=args.u, password=args.p,
-          proxy=args.proxy)
+bot = Bot(username=args.u, password=args.p, proxy=args.proxy,
+          whitelist="whitelist.txt", blacklist="blacklist.txt")
 
 timeline_medias = bot.get_timeline_medias()
 for media in tqdm(timeline_medias, desc="timeline"):

@@ -20,5 +20,5 @@ parser.add_argument('-proxy', type=str, help="proxy")
 args = parser.parse_args()
 
 bot = Bot(username=args.u, password=args.p,
-          proxy=args.proxy)
+          proxy=args.proxy, whitelist="whitelist.txt")
 bot.unfollow_everyone()
