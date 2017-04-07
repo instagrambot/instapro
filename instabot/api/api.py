@@ -68,10 +68,10 @@ class API(object):
         logger.setLevel(logging.DEBUG)
         logging.basicConfig(format='%(asctime)s %(message)s',
                             filename='instabot.log',
-                            level=logging.WARNING
+                            level=logging.ERROR
                             )
         ch = logging.StreamHandler()
-        ch.setLevel(logging.WARNING)
+        ch.setLevel(logging.INFO)
         formatter = logging.Formatter(
             '%(asctime)s - %(levelname)s - %(message)s')
         ch.setFormatter(formatter)
