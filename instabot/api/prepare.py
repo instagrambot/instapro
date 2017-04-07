@@ -8,12 +8,6 @@ from ..user import User
 from .. import config
 
 
-def get_all_users():
-    if not os.path.exists(config.USERS_FOLDER_NAME):
-        return []
-    return [user[:-5] for user in os.listdir(config.USERS_FOLDER_NAME) if user[-5:] == ".user"]
-
-
 def add_credentials(username=None, password=None):
     if username is None or password is None:
         print("Enter your login: ")
@@ -26,7 +20,7 @@ def add_credentials(username=None, password=None):
 def choose_user_dialogue():
     while True:
         print("Which account do you want to use? (Type number)")
-        all_users = get_all_users()
+        all_users = User.get_all_users()
         for ind, login in enumerate(all_users):
             print("%d: %s" % (ind + 1, login))
         print("%d: %s" % (0, "add another account."))
@@ -43,7 +37,7 @@ def choose_user_dialogue():
 
 def get_credentials(username=None, password=None):
     if username is not None:
-        if username in get_all_users():
+        if username in User.get_all_users():
             usr = User.load(username)
             if password is not None:
                 usr.password = password

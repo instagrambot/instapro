@@ -15,11 +15,13 @@ class Dotdict(dict):
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
     __repr__ = dict.__repr__
+
     def __str__(self):
         s = ""
         for key, value in self.items():
             s += "%s: %s\n" % (str(key), str(value))
         return s
+
     def __getstate__(self):
         return self.__dict__
 
@@ -67,6 +69,11 @@ class User(object):
                 users.append(User.load(username))
         return users
 
+    @classmethod
+    def get_all_users(cls):
+        if not os.path.exists(config.USERS_FOLDER_NAME):
+            return []
+        return [path for path in os.listdir(config.USERS_FOLDER_NAME) if path[-5:] == ".user"]
 
     @staticmethod
     def delete(username):

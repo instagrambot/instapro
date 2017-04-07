@@ -28,8 +28,7 @@ from .api_profile import getProfileData
 from .api_profile import editProfile
 from .api_profile import setNameAndPhone
 
-from .prepare import get_credentials
-from .prepare import delete_credentials
+from .prepare import get_credentials, delete_credentials
 
 
 # The urllib library was split into other modules from Python 2 to Python 3
@@ -182,6 +181,10 @@ class API(object):
             except:
                 pass
             return False
+
+    @classmethod
+    def get_all_users(cls):
+        return User.get_all_users()
 
     def data_to_send_with(self, items):
         base_dict = {

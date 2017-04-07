@@ -24,6 +24,7 @@ class TestUser(unittest.TestCase):
         self.assertTrue(api.unfollow(352300017))
         self.assertEqual(reqs + 2, api.User.counters.requests)
         api.User.save()
+        self.assertTrue(API.get_all_users() > 0)
 
     def test_bot(self):
         bot = Bot("instabotproject")
