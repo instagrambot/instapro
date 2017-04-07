@@ -118,18 +118,12 @@ class API(object):
                                  self.User.username)
                 self.User.isLoggedIn = True
                 return True
-            else:
-                self.logger.warning(
-                    "Login or password is incorrect or you need to approve "
-                    "Pyour actions in Instagram App. Go there and check that all is ok.")
-                self.User.isLoggedIn = False
-                time.sleep(30)
-                self.login()
-        else:
-            self.logger.warning(
-                "Can't login. May be you have been banned. Go to mobile app and try again.")
-            delete_credentials(self.User.username)
-            exit()
+
+        self.logger.error(
+            "Login or password is incorrect or you need to approve "
+            "your actions in Instagram App. Go there and check that all is ok.")
+        delete_credentials(self.User.username)
+        exit()
 
     def logout(self):
         if not self.User.isLoggedIn:
