@@ -19,8 +19,11 @@ def add_credentials(username=None, password=None):
 
 def choose_user_dialogue():
     while True:
-        print("Which account do you want to use? (Type number)")
         all_users = User.get_all_users()
+        if len(all_users) == 0:
+            add_credentials()
+            continue
+        print("Which account do you want to use? (Type number)")
         for ind, login in enumerate(all_users):
             print("%d: %s" % (ind + 1, login))
         print("%d: %s" % (0, "add another account."))
