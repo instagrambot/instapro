@@ -24,6 +24,8 @@ bot = Bot(username=args.u, password=args.p,
 
 wait = 5 * 60  # in seconds
 
+bot.logger.info("This bot will like last medias from your feed and sleep "
+                "for %d minutes between iterations." % (wait / 60))
 while True:
 	bot.like_timeline()
 	time.sleep(wait)
