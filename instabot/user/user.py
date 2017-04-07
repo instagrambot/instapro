@@ -8,6 +8,7 @@ from enum import IntEnum
 
 from .. import config
 
+users_folder_path = config.PROJECT_FOLDER_PATH + config.USERS_FOLDER_NAME
 
 class Dotdict(dict):
     """dot.notation access to dictionary attributes"""
@@ -44,15 +45,17 @@ class User(object):
         self.filters = Dotdict({})
 
     def save(self):
-        if not os.path.exists(config.USERS_FOLDER_NAME):
-            os.makedirs(config.USERS_FOLDER_NAME)
-        output_path = config.USERS_FOLDER_NAME + "%s.user" % self.username
+        if not os.path.exists(users_folder_path):
+            if not os.path.exists(config.PROJECT_FOLDER_PATH):
+                os.makedirs(config.PROJECT_FOLDER_PATH)
+            os.makedirs(users_folder_path)
+        output_path = users_folder_path + "%s.user" % self.username
         with open(output_path, 'wb') as foutput:
             pickle.dump(self, foutput)
 
     @classmethod
     def load(cls, username):
-        input_path = config.USERS_FOLDER_NAME + "%s.user" % username
+        input_path = users_folder_path + "%s.user" % username
         if os.path.exists(input_path):
             with open(input_path, 'rb') as finput:
                 return pickle.load(finput)
@@ -63,7 +66,7 @@ class User(object):
     @classmethod
     def load_all(cls):
         users = []
-        for user_path in os.listdir(config.USERS_FOLDER_NAME):
+        for user_path in os.listdir(users_folder_path):
             if user_path[-5:] == ".user":
                 username = user_path[:-5]
                 users.append(User.load(username))
@@ -71,13 +74,13 @@ class User(object):
 
     @classmethod
     def get_all_users(cls):
-        if not os.path.exists(config.USERS_FOLDER_NAME):
+        if not os.path.exists(users_folder_path):
             return []
-        return [path[:-5] for path in os.listdir(config.USERS_FOLDER_NAME) if path[-5:] == ".user"]
+        return [path[:-5] for path in os.listdir(users_folder_path) if path[-5:] == ".user"]
 
     @staticmethod
     def delete(username):
-        input_path = config.USERS_FOLDER_NAME + "%s.user" % username
+        input_path = users_folder_path + "%s.user" % username
         if os.path.exists(input_path):
             os.remove(input_path)
 
