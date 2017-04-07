@@ -103,34 +103,42 @@ def getFollowersToFile(self, user):
     time.sleep(5)
 
 
-bot = Bot(
-    max_likes_per_day=1000,
-    max_unlikes_per_day=1000,
-    max_follows_per_day=1000,
-    max_unfollows_per_day=350,
-    max_comments_per_day=100,
-    max_likes_to_like=50,
-    max_followers_to_follow=500,
-    min_followers_to_follow=10,
-    max_following_to_follow=500,
-    min_following_to_follow=10,
-    max_followers_to_following_ratio=10,
-    max_following_to_followers_ratio=2,
-    min_media_count_to_follow=7,
-    like_delay=10,
-    unlike_delay=10,
-    follow_delay=30,
-    unfollow_delay=30,
-    comment_delay=60,
-    # whitelist='whitelist.txt',
-    stop_words=['order', 'shop', 'store', 'free', 'doodleartindonesia',
-                'doodle art indonesia', 'fullofdoodleart', 'commission',
-                'vector', 'karikatur', 'jasa', 'open']
-)
+bot = Bot(whitelist='whitelist.txt')
+
+bot.set_limits(max_likes_per_day=1000,
+               max_unlikes_per_day=1000,
+               max_follows_per_day=1000,
+               max_unfollows_per_day=900,
+               max_comments_per_day=100,
+               max_blocks_per_day=100,
+               max_unblocks_per_day=100
+               )
+
+bot.set_filters(filter_users=True,
+                max_likes_to_like=100,
+                max_followers_to_follow=2000,
+                min_followers_to_follow=10,
+                max_following_to_follow=2000,
+                min_following_to_follow=10,
+                max_followers_to_following_ratio=10,
+                max_following_to_followers_ratio=2,
+                min_media_count_to_follow=7,
+                max_following_to_block=2000,
+                stop_words=['order', 'shop', 'store', 'free', 'doodleartindonesia',
+                            'doodle art indonesia', 'fullofdoodleart', 'commission',
+                            'vector', 'karikatur', 'jasa', 'open'])
+
+bot.set_delays(like_delay=10,
+               unlike_delay=10,
+               follow_delay=30,
+               unfollow_delay=30,
+               comment_delay=60,
+               block_delay=30,
+               unblock_delay=30)
+
 
 bot.logger.info("Multi script run")
 print('INSTABOT VERSION: %s ' % bot.version())
-# print('Hi, welcome to instabot. I will guide you.')
 
 while True:
     try:
