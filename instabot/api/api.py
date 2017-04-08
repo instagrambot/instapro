@@ -123,12 +123,15 @@ class API(object):
                                  self.User.username)
                 self.User.isLoggedIn = True
                 return True
-
-        self.logger.error(
-            "Login or password is incorrect or you need to approve "
-            "your actions in Instagram App. Go there and check that all is ok.")
-        delete_credentials(self.User.username)
-        exit()
+            else:
+                self.logger.error(
+                    "Login or password is incorrect or you need to approve "
+                    "your actions in Instagram App. Go there and check that all is ok.")
+                delete_credentials(self.User.username)
+                exit()
+        else:
+            self.logger.error("No internet connection.")
+            exit()
 
     def logout(self):
         if not self.User.isLoggedIn:
