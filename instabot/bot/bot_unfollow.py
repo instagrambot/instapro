@@ -6,12 +6,11 @@ from . import delay
 
 def unfollow(self, user_id):
     user_id = self.convert_to_user_id(user_id)
-    if self.check_user(user_id):
-        return True  # whitelisted user
     if limits.check_if_bot_can_unfollow(self):
         delay.unfollow_delay(self)
         if super(self.__class__, self).unfollow(user_id):
             self.User.counters.unfollows += 1
+            self.User.following.remove(user_id)
             return True
     else:
         self.logger.info("Out of unfollows for today.")
@@ -21,7 +20,7 @@ def unfollow(self, user_id):
 def unfollow_users(self, user_ids):
     broken_items = []
     user_ids = self.prefilter_users_to_unfollow(user_ids)
-    for user_id in tqdm(user_ids):
+    for user_id in tqdm(user_ids, desc="Unfollowing users"):
         if not self.unfollow(user_id):
             delay.error_delay(self)
             broken_items = user_ids[user_ids.index(user_id):]

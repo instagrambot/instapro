@@ -12,8 +12,7 @@ def follow(self, user_id):
         delay.follow_delay(self)
         if super(self.__class__, self).follow(user_id):
             self.User.counters.follows += 1
-            # add this user_id to self.User.following
-            # also remove in unfollow
+            self.User.following.append(user_id)
             return True
     else:
         self.logger.info("Out of follows for today.")
