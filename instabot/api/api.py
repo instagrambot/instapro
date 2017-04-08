@@ -71,7 +71,7 @@ class API(object):
                             level=logging.ERROR
                             )
         ch = logging.StreamHandler()
-        ch.setLevel(logging.INFO)
+        ch.setLevel(logging.DEBUG)
         formatter = logging.Formatter(
             '%(asctime)s - %(levelname)s - %(message)s')
         ch.setFormatter(formatter)
@@ -404,12 +404,14 @@ class API(object):
         return self.SendRequest('direct_share/inbox/?')
 
     def follow(self, userId):
+        userId = self.convert_to_user_id(userId)
         data = self.data_to_send_with({
             'user_id': userId,
         })
         return self.SendRequest('friendships/create/' + str(userId) + '/', self.generateSignature(data))
 
     def unfollow(self, userId):
+        userId = self.convert_to_user_id(userId)
         data = self.data_to_send_with({
             'user_id': userId,
         })
@@ -524,3 +526,20 @@ class API(object):
             for item in temp["items"]:
                 liked_items.append(item)
         return liked_items
+
+    def get_userid_from_username(self, username):
+        self.searchUsername(username)
+        if "user" in self.LastJson:
+            return int(self.LastJson["user"]["pk"])
+        return None  # Not found
+
+
+    def convert_to_user_id(self, smth):
+        if isinstance(smth, int):
+            return smth
+        smth = str(smth)
+        if not smth.isdigit():
+            if smth[0] == "@":  # cut first @
+                smth = smth[1:]
+            smth = self.get_userid_from_username(smth)
+        return int(smth)
