@@ -93,6 +93,11 @@ class API(object):
         generated_uuid = str(uuid.uuid4())
         return generated_uuid
 
+    @classmethod
+    def load_all(cls):
+        usernames = User.get_all_users()
+        return [API(usr) for usr in usernames]
+
     def login(self, force=False):
         if not force and self.User.isLoggedIn:
             return True
