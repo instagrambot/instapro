@@ -12,7 +12,7 @@ from . import delay
 def get_media_owner(self, media_id):
     self.mediaInfo(media_id)
     try:
-        return str(self.LastJson["items"][0]["user"]["pk"])
+        return int(self.LastJson["items"][0]["user"]["pk"])
     except:
         return False
 
@@ -77,20 +77,13 @@ def get_hashtag_users(self, hashtag):
     users = []
     self.getHashtagFeed(hashtag)
     for i in self.LastJson['items']:
-        users.append(str(i['user']['pk']))
+        users.append(int(i['user']['pk']))
     return users
 
 
 def get_geotag_users(self, geotag):
     # TODO: returns list userids who just posted on this geotag
     pass
-
-
-def get_userid_from_username(self, username):
-    self.searchUsername(username)
-    if "user" in self.LastJson:
-        return str(self.LastJson["user"]["pk"])
-    return None  # Not found
 
 
 def get_user_info(self, user_id):
@@ -104,7 +97,7 @@ def get_user_info(self, user_id):
 def get_user_followers(self, user_id):
     user_id = self.convert_to_user_id(user_id)
     followers = self.getTotalFollowers(user_id)
-    followers = [str(item['pk'])
+    followers = [int(item['pk'])
                  for item in followers][::-1] if followers else []
     if user_id == self.User.user_id:
         self.User.followers = followers
@@ -114,7 +107,7 @@ def get_user_followers(self, user_id):
 def get_user_following(self, user_id):
     user_id = self.convert_to_user_id(user_id)
     following = self.getTotalFollowings(user_id)
-    following = [str(item['pk'])
+    following = [int(item['pk'])
                  for item in following][::-1] if following else []
     if user_id == self.User.user_id:
         self.User.following = following
@@ -126,7 +119,7 @@ def get_media_likers(self, media_id):
     if "users" not in self.LastJson:
         self.logger.info("Media with %s not found." % media_id)
         return []
-    return list(map(lambda user: str(user['pk']), self.LastJson["users"]))
+    return list(map(lambda user: int(user['pk']), self.LastJson["users"]))
 
 
 def get_media_comments(self, media_id):
@@ -138,21 +131,10 @@ def get_media_commenters(self, media_id):
     self.getMediaComments(media_id)
     if 'comments' not in self.LastJson:
         return []
-    return [str(item["user"]["pk"]) for item in self.LastJson['comments']]
+    return [int(item["user"]["pk"]) for item in self.LastJson['comments']]
 
 
 def get_comment(self):
     if len(self.comments):
         return random.choice(self.User.comments).strip()
     return "wow"
-
-
-def convert_to_user_id(self, smth):
-    smth = str(smth)
-    if not smth.isdigit():
-        if smth[0] == "@":  # cut first @
-            smth = smth[1:]
-        smth = self.get_userid_from_username(smth)
-        delay.very_small_delay(self)
-    # if type is not str than it is int so user_id passed
-    return smth

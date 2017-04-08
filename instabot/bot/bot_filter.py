@@ -1,6 +1,15 @@
 """
     Filter functions for media and user lists.
+
+    Userlist workflow:
+
+        -- You get a list from any getter (from hashtag / user's followers etc.)
+        -- You pass it throw self.prefilter_users()
+        --
+
 """
+
+from tqdm import tqdm
 
 from . import delay
 
@@ -51,7 +60,8 @@ def check_media(self, media_id):
     else:
         return False
 
-# filter users
+#################################################
+#################################################
 
 
 def search_stop_words_in_user(self, user_info):
@@ -72,8 +82,61 @@ def search_stop_words_in_user(self, user_info):
     return False
 
 
+def prefilter_users_to_follow(self, user_ids):
+    """ Drops users from whitelist and blacklist and already followed
+        Also converts all items in user_ids from username to user_id.
+    """
+    filtered = []
+    for user_id in tqdm(user_ids, desc="Prefiltering users to follow", leave=False):
+        user_id = self.convert_to_user_id(user_id)
+        if not user_id:
+            continue
+        if self.User.blacklist and user_id in self.User.blacklist:
+            continue
+        if self.User.whitelist and user_id in self.User.whitelist:
+            continue
+        if user_id in self.User.following:
+            continue
+        filtered.append(user_id)
+    if len(filtered) == len(user_ids):
+        self.logger.debug("Nothing was filtered in prefilter to follow")
+    return filtered
+
+
+def prefilter_users_to_unfollow(self, user_ids):
+    """ Drops users from whitelist and not followed
+        Also converts all items in user_ids from username to user_id.
+    """
+    filtered = []
+    for user_id in tqdm(user_ids, desc="Prefiltering users to unfollow", leave=False):
+        user_id = self.convert_to_user_id(user_id)
+        if not user_id:
+            continue
+        if user_id not in self.User.following:
+            continue  # don't follow the current user
+        if self.User.whitelist and user_id in self.User.whitelist:
+            continue  # whitelist - users not to unfollow
+        filtered.append(user_id)
+    return filtered
+
+
+def prefilter_users_to_interract(self, user_ids):
+    """ Drops users from blacklist
+        Also converts all items in user_ids from username to user_id.
+    """
+    filtered = []
+    for user_id in tqdm(user_ids, desc="Prefiltering users to interract", leave=False):
+        user_id = self.convert_to_user_id(user_id)
+        if not user_id:
+            continue
+        if self.User.blacklist and user_id in self.User.blacklist:
+            continue  # blacklist - users not to interract
+        filtered.append(user_id)
+    return filtered
+
+
 def filter_users(self, user_id_list):
-    return [str(user["pk"]) for user in user_id_list]
+    return [int(user["pk"]) for user in user_id_list]
 
 
 def check_user(self, user_id, filter_closed_acc=False):
@@ -82,20 +145,6 @@ def check_user(self, user_id, filter_closed_acc=False):
 
     delay.small_delay(self)
     user_id = self.convert_to_user_id(user_id)
-
-    if not user_id:
-        return False
-    if self.User.whitelist and user_id in self.User.whitelist:
-        return True
-    if self.User.blacklist and user_id in self.User.blacklist:
-        return False
-
-    if self.User.following == []:
-        self.User.following = self.get_user_following(self.User.user_id)
-    if self.User.followers == []:
-        self.User.followers = self.get_user_followers(self.User.user_id)
-    if user_id in self.User.following or user_id in self.User.followers:
-        return False
 
     user_info = self.get_user_info(user_id)
     if not user_info:
