@@ -55,16 +55,24 @@ class User(object):
 
     @classmethod
     def load(cls, username):
+        """ returns the User class instance by username """
         input_path = users_folder_path + "%s.user" % username
         if os.path.exists(input_path):
             with open(input_path, 'rb') as finput:
-                return pickle.load(finput)
+                try:
+                    dumped_user = pickle.load(finput)
+                    return dumped_user
+                except:
+                    warnings.warn("%s is corrupted." % username)
+                    cls.delete(username)
+                    return None
         else:
             warnings.warn("No user found")
             return None
 
     @classmethod
     def load_all(cls):
+        """ returns a list of all User instances """
         users = []
         for user_path in os.listdir(users_folder_path):
             if user_path[-5:] == ".user":
@@ -74,6 +82,7 @@ class User(object):
 
     @classmethod
     def get_all_users(cls):
+        """ returns a list of usernames """
         if not os.path.exists(users_folder_path):
             return []
         return [path[:-5] for path in os.listdir(users_folder_path) if path[-5:] == ".user"]
