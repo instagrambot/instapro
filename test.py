@@ -30,7 +30,7 @@ class TestUser(unittest.TestCase):
         bot = Bot("instabotproject")
         self.assertTrue(isinstance(bot, Bot))
         reqs = bot.User.counters.requests
-        self.assertEqual(bot.convert_to_user_id("ohld"), "352300017")
+        self.assertEqual(bot.convert_to_user_id("ohld"), 352300017)
         self.assertEqual(reqs + 1, bot.User.counters.requests)
         bot.User.save()
 
