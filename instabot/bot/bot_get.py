@@ -18,7 +18,7 @@ def get_media_owner(self, media_id):
 
 
 def get_your_medias(self):
-    self.getSelfUserFeed()
+    self.getUserFeed(self.User.user_id)
     return self.filter_medias(self.LastJson["items"], False)
 
 

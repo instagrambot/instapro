@@ -279,9 +279,6 @@ class API(object):
     def getUsernameInfo(self, usernameId):
         return self.SendRequest('users/' + str(usernameId) + '/info/')
 
-    def getSelfUsernameInfo(self):
-        return self.getUsernameInfo(self.user_id)
-
     def getRecentActivity(self):
         activity = self.SendRequest('news/inbox/?')
         return activity
@@ -299,9 +296,6 @@ class API(object):
                                 '/feed/?rank_token=' + str(self.User.rank_token) + '&ranked_content=true&')
         return tags
 
-    def getSelfUserTags(self):
-        return self.getUserTags(self.User.user_id)
-
     def tagFeed(self, tag):
         userFeed = self.SendRequest(
             'feed/tag/' + str(tag) + '/?rank_token=' + str(self.User.rank_token) + '&ranked_content=true&')
@@ -314,9 +308,6 @@ class API(object):
     def getGeoMedia(self, usernameId):
         locations = self.SendRequest('maps/user/' + str(usernameId) + '/')
         return locations
-
-    def getSelfGeoMedia(self):
-        return self.getGeoMedia(self.User.user_id)
 
     def fbUserSearch(self, query):
         return fbUserSearch(self, query)
@@ -348,9 +339,6 @@ class API(object):
             '&rank_token=' + str(self.User.rank_token) + '&ranked_content=true')
         return query
 
-    def getSelfUserFeed(self, maxid='', minTimestamp=None):
-        return self.getUserFeed(self.User.user_id, maxid, minTimestamp)
-
     def getHashtagFeed(self, hashtagString, maxid=''):
         return self.SendRequest('feed/tag/' + hashtagString + '/?max_id=' + str(
             maxid) + '&rank_token=' + self.User.rank_token + '&ranked_content=true&')
@@ -368,9 +356,6 @@ class API(object):
         return self.SendRequest('friendships/' + str(usernameId) + '/following/?max_id=' + str(maxid) +
                                 '&ig_sig_key_version=' + config.SIG_KEY_VERSION + '&rank_token=' + self.User.rank_token)
 
-    def getSelfUsersFollowing(self):
-        return self.getUserFollowings(self.User.user_id)
-
     def getUserFollowers(self, usernameId, maxid=''):
         if maxid == '':
             return self.SendRequest('friendships/' + str(usernameId) + '/followers/?rank_token=' + self.User.rank_token)
@@ -378,9 +363,6 @@ class API(object):
             return self.SendRequest(
                 'friendships/' + str(usernameId) + '/followers/?rank_token=' + self.User.rank_token + '&max_id=' + str(
                     maxid))
-
-    def getSelfUserFollowers(self):
-        return self.getUserFollowers(self.User.user_id)
 
     def like(self, mediaId):
         data = self.data_to_send_with({
@@ -507,15 +489,6 @@ class API(object):
                 return user_feed
             next_max_id = temp["next_max_id"]
 
-    def getTotalSelfUserFeed(self, minTimestamp=None):
-        return self.getTotalUserFeed(self.User.user_id, minTimestamp)
-
-    def getTotalSelfFollowers(self):
-        return self.getTotalFollowers(self.User.user_id)
-
-    def getTotalSelfFollowings(self):
-        return self.getTotalFollowings(self.User.user_id)
-
     def getTotalLikedMedia(self, scan_rate=1):
         next_id = ''
         liked_items = []
@@ -532,7 +505,6 @@ class API(object):
         if "user" in self.LastJson:
             return int(self.LastJson["user"]["pk"])
         return None  # Not found
-
 
     def convert_to_user_id(self, smth):
         if isinstance(smth, int):
