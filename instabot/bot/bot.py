@@ -7,9 +7,9 @@ from ..api import API
 from .bot_get import get_media_owner, get_your_medias, get_user_medias
 from .bot_get import get_timeline_medias, get_hashtag_medias, get_user_info
 from .bot_get import get_geotag_medias, get_timeline_users, get_hashtag_users
-from .bot_get import get_media_commenters, get_userid_from_username
+from .bot_get import get_media_commenters
 from .bot_get import get_user_followers, get_user_following, get_media_likers
-from .bot_get import get_media_comments, get_geotag_users, convert_to_user_id
+from .bot_get import get_media_comments, get_geotag_users
 from .bot_get import get_comment, get_media_info, get_user_likers
 
 from .bot_like import like, like_medias, like_timeline, like_user, like_users
@@ -28,7 +28,8 @@ from .bot_comment import comment_hashtag, is_commented
 from .bot_block import block, unblock, block_users, unblock_users, block_bots
 
 from .bot_filter import filter_medias, check_media, filter_users, check_user
-from .bot_filter import check_not_bot
+from .bot_filter import check_not_bot, prefilter_users_to_follow
+from .bot_filter import prefilter_users_to_unfollow, prefilter_users_to_interract
 
 from .bot_support import check_if_file_exists, read_list_from_file
 from .bot_support import add_whitelist, add_blacklist
@@ -37,6 +38,7 @@ from .bot_stats import save_user_stats
 
 
 class Bot(API):
+
     def __init__(self,
                  username=None,
                  password=None,
@@ -144,20 +146,21 @@ class Bot(API):
         return next((p.version for p in pkg_resources.working_set if p.project_name.lower() == 'instabot'), "No match")
 
     def logout(self):
-        self.User.save()
+        super(self.__class__, self).logout()
         self.logger.info("Bot stopped. "
                          "Worked: %s" % (datetime.datetime.now() - self.start_time))
         self.print_counters()
 
     def prepare(self):
-        signal.signal(signal.SIGTERM, self.logout)
-        atexit.register(self.logout)
         if self.User.following == []:
             self.User.following = self.get_user_following(self.User.user_id)
         self.User.whitelist = list(
             filter(None, map(self.convert_to_user_id, self.User.whitelist)))
         self.User.blacklist = list(
             filter(None, map(self.convert_to_user_id, self.User.blacklist)))
+        self.User.save()
+        signal.signal(signal.SIGTERM, self.logout)
+        atexit.register(self.logout)
 
     def print_counters(self):
         print(self.User.counters)
@@ -191,9 +194,6 @@ class Bot(API):
     def get_geotag_users(self, geotag):
         return get_geotag_users(self, geotag)
 
-    def get_userid_from_username(self, username):
-        return get_userid_from_username(self, username)
-
     def get_user_info(self, user_id):
         return get_user_info(self, user_id)
 
@@ -220,9 +220,6 @@ class Bot(API):
 
     def get_user_likers(self, user_id, media_count=10):
         return get_user_likers(self, user_id, media_count)
-
-    def convert_to_user_id(self, usernames):
-        return convert_to_user_id(self, usernames)
 
     # like
 
@@ -330,6 +327,15 @@ class Bot(API):
         return block_bots(self)
 
     # filter
+
+    def prefilter_users_to_follow(self, user_ids):
+        return prefilter_users_to_follow(self, user_ids)
+
+    def prefilter_users_to_unfollow(self, user_ids):
+        return prefilter_users_to_unfollow(self, user_ids)
+
+    def prefilter_users_to_interract(self, user_ids):
+        return prefilter_users_to_interract(self, user_ids)
 
     def filter_medias(self, media_items, filtration=True):
         return filter_medias(self, media_items, filtration)

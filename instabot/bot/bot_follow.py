@@ -22,10 +22,8 @@ def follow(self, user_id):
 
 def follow_users(self, user_ids):
     broken_items = []
-    self.logger.info("Going to follow %d users." % len(user_ids))
-    user_ids = list(set(user_ids) - set(self.User.following))
-    self.logger.info("You are not follow %d of them" % len(user_ids))
-    for user_id in tqdm(user_ids):
+    user_ids = self.prefilter_users_to_follow(user_ids)
+    for user_id in tqdm(user_ids, desc="Following users"):
         if not self.follow(user_id):
             delay.error_delay(self)
             broken_items = user_ids[user_ids.index(user_id):]

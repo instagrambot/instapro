@@ -20,7 +20,7 @@ def like_medias(self, medias):
         self.logger.info("Nothing to like.")
         return broken_items
     self.logger.info("Going to like %d medias." % (len(medias)))
-    for media in tqdm(medias):
+    for media in tqdm(medias, desc="Liking medias"):
         if not self.like(media):
             delay.error_delay(self)
             broken_items = medias[medias.index(media):]
@@ -50,7 +50,8 @@ def like_user(self, user_id, amount=None):
 
 
 def like_users(self, user_ids, nlikes=None):
-    for user_id in user_ids:
+    user_ids = self.prefilter_users_to_interract(user_ids)
+    for user_id in tqdm(user_ids, desc="Liking users with %d likes" % nlikes):
         self.like_user(user_id, amount=nlikes)
 
 
