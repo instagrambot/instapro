@@ -37,7 +37,9 @@ class TestUser(unittest.TestCase):
     def test_parser(self):
         prs = Parser()
         self.assertTrue(len(prs.apis) > 0)
-        print(prs.get_user_followers("352300017"))
+        # for item in prs.liked_media(total=30):
+        # for item in prs.user_feed("352300017", total=2):
+            # print(item)
 
 
 def reset_user():
