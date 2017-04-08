@@ -1,4 +1,7 @@
+import time
+import warnings
 from Queue import Queue
+from tqdm import tqdm
 
 from .. import User, API
 
@@ -23,18 +26,68 @@ class Parser(object):
             return None
         return debug_wrapper
 
+    def error_handler(func):
+        def error_handler_wrapper(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except Exception as e:
+                warnings.warn("PARSER: " + str(e))
+                time.sleep(2)
+        return error_handler_wrapper
+
+    @error_handler
     @api_getter
-    def get_user_followers(self, user_id, max_id="", api=None):
-        if api == None:
-            assert(not "No api.")
-        api.getUserFollowers(user_id, maxid=max_id)
+    def _get_user_followers(self, user_id, max_id="", api=None):
+        if api is None:
+            raise ("No API instance was passed")
+        if not api.getUserFollowers(user_id, maxid=max_id):
+            raise ("Broken API")
         result = api.LastJson
-        users = result["users"]
         if result["big_list"] is False:
-            return (users, None)
+            return (result["users"], None)
 
         next_max_id = result["next_max_id"]
-        return (users, next_max_id)
+        return (result["users"], next_max_id)
+
+    @error_handler
+    @api_getter
+    def _get_user_info(self, user_id, api=None):
+        if api is None:
+            raise ("No API instance was passed")
+        if not api.getUsernameInfo(user_id):
+            raise ("Broken API")
+        if "user" in api.LastJson:
+            return api.LastJson["user"]
+        return None
+
+    def get_user_info(self, user_id):
+        return self._get_user_info(user_id)
+
+    def get_user_followers(self, user_id):
+        result = []
+        max_id = ""
+        user_info = self._get_user_info(user_id)
+        if user_info is None:
+            return []
+
+        total_followers = user_info["follower_count"]
+        with tqdm(total=total_followers, desc="Getting followers", leave=False) as pbar:
+            while True:
+                resp = self._get_user_followers(user_id, max_id)
+                if resp is None:
+                    continue
+                users, max_id = resp
+
+                pbar.update(len(users))
+                result.extend(users)
+
+                if max_id is None:
+                    break
+
+        result = result[:total_followers]
+        # assert(len(result) == len(set(result)))
+        return result
+
 
 
     # def get_total_followers(self, user_id):
