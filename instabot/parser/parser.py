@@ -1,6 +1,6 @@
 import time
 import warnings
-from Queue import Queue
+from queue import Queue
 from tqdm import tqdm
 
 from .. import User, API
@@ -8,8 +8,12 @@ from .. import User, API
 
 class Parser(object):
 
-    def __init__(self):
-        self.apis = API.load_all()
+    def __init__(self, apis=None):
+        if apis is None:
+            self.apis = API.load_all()
+        else:
+            self.apis = apis
+
         self.queue = Queue()
         for api in self.apis:
             self.queue.put(api)
@@ -51,7 +55,7 @@ class Parser(object):
     def _get_user_following(self, user_id, max_id="", api=None):
         if api is None:
             raise ("No API instance was passed")
-        if not api.getUserFollowers(user_id, maxid=max_id):
+        if not api.getUserFollowings(user_id, maxid=max_id):
             raise ("Broken API")
         if not api.LastJson["big_list"]:
             return (api.LastJson["users"], None)
@@ -90,9 +94,6 @@ class Parser(object):
             return (["items"], None)
         return (api.LastJson["items"], api.LastJson["next_max_id"])
 
-    def get_user_info(self, user_id):
-        return self._get_user_info(user_id)
-
     @staticmethod
     def generator(func, arg, total=None):
         max_id = ""
@@ -113,6 +114,9 @@ class Parser(object):
                 break
             if total is not None and total <= count:
                 break
+
+    def get_user_info(self, user_id):
+        return self._get_user_info(user_id)
 
     def user_followers(self, user_id, total=None):
         """ generator to iterate over user's followers """
