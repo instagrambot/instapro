@@ -38,7 +38,7 @@ if sys.version_info.major == 3:
 
 class API(object):
 
-    def __init__(self, username=None, password=None, proxy=None):
+    def __init__(self, username=None, password=None, proxy=None, std_logger=False):
         self.User = get_credentials(username, password)
         if not self.User.api_is_set:
             self.User.counters.requests = 0
@@ -58,24 +58,25 @@ class API(object):
             self.User.session.proxies.update(proxies)
 
         # handle logging
-        self.logger = self.set_logger()
+        self.logger = self.set_logger(std_logger)
         if not self.login():
             warning.warn("Can't login %s." % username)
 
     @staticmethod
-    def set_logger():
+    def set_logger(std_logger=False):
         logger = logging.getLogger('instabot')
         logger.setLevel(logging.DEBUG)
         logging.basicConfig(format='%(asctime)s %(message)s',
                             filename='instabot.log',
                             level=logging.ERROR
                             )
-        ch = logging.StreamHandler()
-        ch.setLevel(logging.DEBUG)
-        formatter = logging.Formatter(
-            '%(asctime)s - %(levelname)s - %(message)s')
-        ch.setFormatter(formatter)
-        logger.addHandler(ch)
+        if std_logger:
+            ch = logging.StreamHandler()
+            ch.setLevel(logging.DEBUG)
+            formatter = logging.Formatter(
+                '%(asctime)s - %(levelname)s - %(message)s')
+            ch.setFormatter(formatter)
+            logger.addHandler(ch)
         return logger
 
     @staticmethod
@@ -96,7 +97,7 @@ class API(object):
     @classmethod
     def load_all(cls):
         usernames = User.get_all_users()
-        return [API(usr) for usr in usernames]
+        return [API(usr, std_logger=False) for usr in usernames]
 
     def login(self, force=False):
         if not force and self.User.isLoggedIn:
@@ -127,10 +128,10 @@ class API(object):
                 self.logger.error(
                     "Login or password is incorrect or you need to approve "
                     "your actions in Instagram App. Go there and check that all is ok.")
-                delete_credentials(self.User.username)
+                return False
         else:
             self.logger.error("No internet connection.")
-            exit()
+            return False
 
     def logout(self):
         if not self.User.isLoggedIn:

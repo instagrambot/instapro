@@ -3,6 +3,7 @@ import atexit
 import signal
 
 from ..api import API
+from ..parser import Parser
 
 from .bot_get import get_media_owner, get_your_medias, get_user_medias
 from .bot_get import get_timeline_medias, get_hashtag_medias, get_user_info
@@ -49,7 +50,10 @@ class Bot(API):
 
         super(self.__class__, self).__init__(username=username,
                                              password=password,
-                                             proxy=proxy)
+                                             proxy=proxy,
+                                             std_logger=True)
+
+        self.parser = Parser()
 
         self.start_time = datetime.datetime.now()
 
@@ -153,7 +157,7 @@ class Bot(API):
 
     def prepare(self):
         if self.User.following == []:
-            self.User.following = self.get_user_following(self.User.user_id)
+            self.User.following = list(self.get_user_following(self.User.user_id))
         self.User.whitelist = list(
             filter(None, map(self.convert_to_user_id, self.User.whitelist)))
         self.User.blacklist = list(
