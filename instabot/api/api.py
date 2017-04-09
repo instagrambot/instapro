@@ -38,8 +38,11 @@ if sys.version_info.major == 3:
 
 class API(object):
 
-    def __init__(self, username=None, password=None, proxy=None, std_logger=False):
-        self.User = get_credentials(username, password)
+    def __init__(self, username=None, password=None, proxy=None, std_logger=False, user=None):
+        if user is None:
+            self.User = get_credentials(username, password)
+        else:
+            self.User = user
         if not self.User.api_is_set:
             self.User.counters.requests = 0
             self.User.api_is_set = True
