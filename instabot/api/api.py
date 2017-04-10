@@ -7,6 +7,7 @@ import uuid
 import sys
 import logging
 import time
+import warnings
 from tqdm import tqdm
 
 from ..user import User
@@ -43,6 +44,9 @@ class API(object):
             self.User = get_credentials(username, password)
         else:
             self.User = user
+        if self.User is None:
+            warnings.warn("User not found")
+            return None
         if not self.User.api_is_set:
             self.User.counters.requests = 0
             self.User.api_is_set = True
@@ -63,7 +67,7 @@ class API(object):
         # handle logging
         self.logger = self.set_logger(std_logger)
         if not self.login():
-            warning.warn("Can't login %s." % username)
+            warnings.warn("Can't login %s." % username)
 
     @staticmethod
     def set_logger(std_logger=False):

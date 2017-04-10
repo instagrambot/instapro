@@ -13,12 +13,12 @@ def reset_counters(bot):
     bot.User.counters.comments = 0
     bot.User.counters.blocks = 0
     bot.User.counters.unblocks = 0
-    bot.start_time = datetime.datetime.now()
+    bot.User.start_time = datetime.datetime.now()
 
 
 def reset_if_day_passed(bot):
     current_date = datetime.datetime.now()
-    passed_days = (current_date.date() - bot.start_time.date()).days
+    passed_days = (current_date.date() - bot.User.start_time.date()).days
     if passed_days != 0:
         reset_counters(bot)
 
