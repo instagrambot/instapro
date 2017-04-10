@@ -29,13 +29,11 @@ def get_timeline_medias(self, filtration=True):
     return self.filter_medias(self.LastJson["items"], filtration)
 
 
-def get_user_medias(self, user_id, filtration=True):
+def get_user_medias(self, user_id, total=10, filtration=True):
     user_id = self.convert_to_user_id(user_id)
-    self.getUserFeed(user_id)
-    if self.LastJson["status"] == 'fail':
-        self.logger.warning("This is a closed account.")
-        return []
-    return self.filter_medias(self.LastJson["items"], filtration)
+    for item in self.parser.user_feed(user_id, total=total):
+        # add media filtration
+        return item['pk']
 
 
 def get_user_likers(self, user_id, media_count=10):
@@ -87,31 +85,21 @@ def get_geotag_users(self, geotag):
 
 
 def get_user_info(self, user_id):
-    user_id = self.convert_to_user_id(user_id)
-    self.getUsernameInfo(user_id)
-    if 'user' not in self.LastJson:
-        return False
-    return self.LastJson['user']
+    return self.parser.get_user_info(user_id)
 
 
 def get_user_followers(self, user_id):
     user_id = self.convert_to_user_id(user_id)
-    followers = self.getTotalFollowers(user_id)
-    followers = [int(item['pk'])
-                 for item in followers][::-1] if followers else []
-    if user_id == self.User.user_id:
-        self.User.followers = followers
-    return followers
+    for item in self.parser.user_followers(user_id):
+        # add user_filtration here
+        yield item["pk"]
 
 
 def get_user_following(self, user_id):
     user_id = self.convert_to_user_id(user_id)
-    following = self.getTotalFollowings(user_id)
-    following = [int(item['pk'])
-                 for item in following][::-1] if following else []
-    if user_id == self.User.user_id:
-        self.User.following = following
-    return following
+    for item in self.parser.user_following(user_id):
+        # add user_filtration here
+        yield item["pk"]
 
 
 def get_media_likers(self, media_id):

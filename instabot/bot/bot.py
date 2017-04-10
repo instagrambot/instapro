@@ -53,9 +53,11 @@ class Bot(API):
                                              proxy=proxy,
                                              std_logger=True)
 
-        self.parser = Parser()
+        apis = API.load_all()
+        self.logger("Parser Accounts available: %d" % len(apis))
+        self.parser = Parser(apis=apis)
 
-        self.start_time = datetime.datetime.now()
+        self.User.start_time = datetime.datetime.now()
 
         if not self.User.bot_is_set:
             self.User.following = []

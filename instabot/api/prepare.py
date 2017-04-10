@@ -52,7 +52,8 @@ def get_credentials(username=None, password=None):
         else:
             warnings.warn(
                 "User not found in base. Please provide credentials.")
-    return choose_user_dialogue()
+    return None
+    # return choose_user_dialogue()
 
 
 def delete_credentials(username):
