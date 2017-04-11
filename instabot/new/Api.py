@@ -1,36 +1,8 @@
-import requests
 import json
 import time
 import hashlib
 import hmac
 from instabot.new import Config
-
-
-def login(user):
-    session = requests.Session()
-
-    session.headers.update({
-        'Connection': 'close',
-        'Accept': '*/*',
-        'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        'Cookie2': '$Version=1',
-        'Accept-Language': 'en-US',
-        'User-Agent': Config.USER_AGENT})
-
-    data = {
-        'phone_id': user.device_uuid,
-        'username': user.name,
-        'guid': user.guid,
-        'device_id': user.device_id,
-        'password': user.password,
-        'login_attempt_count': '0'}
-
-    message = send_request(session, 'accounts/login/', generate_signature(json.dumps(data)))
-
-    user_id = str(message["logged_in_user"]["pk"])
-    print('Success ' + user_id)
-    user.id = user_id
-    user.session = session
 
 
 def send_request(session, endpoint, post=None):
