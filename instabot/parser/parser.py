@@ -13,7 +13,7 @@ class Parser(object):
             self.apis = API.load_all()
         else:
             self.apis = apis
-        if len(apis) == 0:
+        if apis is None or len(apis) == 0:
             warnings.warn("PARSER: No API found.")
             return None
 

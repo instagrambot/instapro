@@ -41,7 +41,7 @@ class API(object):
 
     def __init__(self, username=None, password=None, proxy=None, std_logger=False, user=None):
         if user is None:
-            self.User = get_credentials(username, password)
+            self.User = get_credentials(username, password, std_logger)
         else:
             self.User = user
         if self.User is None:
@@ -68,7 +68,6 @@ class API(object):
         self.logger = self.set_logger(std_logger)
         if not self.login():
             warnings.warn("Can't login %s." % username)
-            return None
 
     @staticmethod
     def set_logger(std_logger=False):

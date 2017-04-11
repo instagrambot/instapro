@@ -54,6 +54,9 @@ class Bot(API):
                                              std_logger=True)
 
         apis = API.load_all()
+        if apis is None:
+            warnings.warn("No users available.")
+            return None
         self.logger("Parser Accounts available: %d" % len(apis))
         self.parser = Parser(apis=apis)
 
