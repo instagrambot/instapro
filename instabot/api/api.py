@@ -68,6 +68,7 @@ class API(object):
         self.logger = self.set_logger(std_logger)
         if not self.login():
             warnings.warn("Can't login %s." % username)
+            return None
 
     @staticmethod
     def set_logger(std_logger=False):
