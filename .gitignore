@@ -102,3 +102,7 @@ bot_cp_*
 
 # Saved users
 users/
+accounts/
+
+# IDE temp
+.idea/

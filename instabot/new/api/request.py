@@ -2,15 +2,15 @@ import json
 import time
 import hashlib
 import hmac
-from instabot.new import Config
+from instabot.new import config
 
 
-def send_request(session, endpoint, post=None):
+def send(session, endpoint, post=None):
     try:
         if post is not None:  # POST
-            response = session.post(Config.API_URL + endpoint, data=post)
+            response = session.post(config.API_URL + endpoint, data=generate_signature(post))
         else:  # GET
-            response = session.get(Config.API_URL + endpoint)
+            response = session.get(config.API_URL + endpoint)
     except Exception as e:
         print(str(e))
         return False
@@ -29,5 +29,5 @@ def send_request(session, endpoint, post=None):
 
 
 def generate_signature(data):
-    return 'ig_sig_key_version=' + Config.SIG_KEY_VERSION + '&signed_body=' + hmac.new(
-        Config.IG_SIG_KEY.encode('utf-8'), data.encode('utf-8'), hashlib.sha256).hexdigest() + '.' + data
+    return 'ig_sig_key_version=' + config.SIG_KEY_VERSION + '&signed_body=' + hmac.new(
+        config.IG_SIG_KEY.encode('utf-8'), data.encode('utf-8'), hashlib.sha256).hexdigest() + '.' + data
