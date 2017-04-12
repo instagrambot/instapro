@@ -1,3 +1,6 @@
+import os
+
+
 API_URL = 'https://i.instagram.com/api/v1/'
 DEVICE_SETTINTS = {
     'manufacturer': 'Xiaomi',
@@ -13,5 +16,5 @@ SIG_KEY_VERSION = '4'
 
 #--
 
-PROJECT_FOLDER_PATH = 'C:\\Users\\Home\\PycharmProjects\\InstagramBot01\\'
-USERS_FOLDER_NAME = 'accounts\\'
+PROJECT_FOLDER_PATH = os.path.expanduser("~/instabot/")
+USERS_FOLDER_NAME = 'users/'
