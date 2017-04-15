@@ -3,9 +3,8 @@ import json
 import os
 import pickle
 import uuid
-
 import requests
-
+import logging
 from instabot.new import config
 from instabot.new.api import request
 
@@ -29,6 +28,7 @@ class Dotdict(dict):
 
     def __setstate__(self, d):
         self.__dict__.update(d)
+
 
 class User():
     def __init__(self, username, password):
@@ -67,7 +67,7 @@ class User():
         message = request.send(self.session, 'accounts/login/', json.dumps(data))
 
         self.id = str(message["logged_in_user"]["pk"])
-        print('Success')
+        logging.getLogger('main').info(self.name + ' successful authorization')
 
     def save(self):
         if not os.path.exists(users_folder_path):

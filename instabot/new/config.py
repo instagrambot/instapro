@@ -1,4 +1,5 @@
 import os
+import logging
 
 
 API_URL = 'https://i.instagram.com/api/v1/'
@@ -18,3 +19,8 @@ SIG_KEY_VERSION = '4'
 
 PROJECT_FOLDER_PATH = os.path.expanduser("~/instabot/")
 USERS_FOLDER_NAME = 'users/'
+
+#--
+
+LOGGING_LEVEL = logging.DEBUG
+LOG_FILE = None

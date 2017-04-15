@@ -1,11 +1,15 @@
 from instabot.new.user.user import User
 from instabot.new.user.user_controller import UserController
 from instabot.new.api import api
+import logging.config
 
+logging.config.fileConfig('log.conf')
+log = logging.getLogger('main')
+log.info('Start!')
 
-user1 = User('mybusiness_1466018390', 'TdFfsrTf23');
-user2 = User('mybusiness_1466020273', 'TdFfsrTf23');
-#user3 = User('login', 'pass');
+#user1 = User('log', 'pass');
+#user2 = User('log', 'pass');
+user3 = User('log', 'pass');
 
 controller = UserController()
 
