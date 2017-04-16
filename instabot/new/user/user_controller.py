@@ -20,11 +20,13 @@ class UserController:
 
     def load_user(self, name=None):
         if name is None:
-            input_path = users_folder_path + random.choice([x for x in os.listdir(users_folder_path) if x.endswith('.user')])
+            input_path = users_folder_path + \
+                random.choice([x for x in os.listdir(
+                    users_folder_path) if x.endswith('.user')])
         else:
             input_path = users_folder_path + "%s.user" % name
             if not os.path.exists(input_path):
-                #warn
+                # warn
                 return None
 
         with open(input_path, 'rb') as finput:
@@ -32,6 +34,6 @@ class UserController:
                 self.current_user = pickle.load(finput)
             except:
                 #warnings.warn("%s is corrupted." % username)
-                #warn
+                # warn
                 os.remove(input_path)
                 return None

@@ -9,7 +9,7 @@ log.info('Start!')
 
 #user1 = User('log', 'pass');
 #user2 = User('log', 'pass');
-user3 = User('log', 'pass');
+user3 = User('log', 'pass')
 
 controller = UserController()
 

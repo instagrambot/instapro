@@ -36,7 +36,8 @@ class User():
         self.password = password
         self.device_uuid = str(uuid.uuid4())
         self.guid = str(uuid.uuid4())
-        self.device_id = 'android-' + hashlib.md5(username.encode('utf-8')).hexdigest()[:16]
+        self.device_id = 'android-' + \
+            hashlib.md5(username.encode('utf-8')).hexdigest()[:16]
         self.session = requests.Session()
         self.id = None
         self.counters = Dotdict({})
@@ -64,7 +65,8 @@ class User():
             'password': self.password,
             'login_attempt_count': '0'}
 
-        message = request.send(self.session, 'accounts/login/', json.dumps(data))
+        message = request.send(
+            self.session, 'accounts/login/', json.dumps(data))
 
         self.id = str(message["logged_in_user"]["pk"])
         logging.getLogger('main').info(self.name + ' successful authorization')
@@ -87,5 +89,3 @@ class User():
         items = self.__dict__.copy()
         # del items["counters"]
         return json.dumps(items, indent=2)
-
-
