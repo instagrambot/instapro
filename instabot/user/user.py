@@ -40,12 +40,14 @@ class User(object):
             hashlib.md5(username.encode('utf-8')).hexdigest()[:16]
         self.session = requests.Session()
         self.id = None
+        self.logged_id = False
         self.counters = Dotdict({})
         self.limits = Dotdict({})
         self.delays = Dotdict({})
         self.filters = Dotdict({})
 
-        self.login()
+        if not self.login():
+            return None
         self.save()
 
     def login(self):
@@ -69,11 +71,13 @@ class User(object):
             self.session, 'accounts/login/', json.dumps(data))
         if message is None:
             logging.getLogger('main').info(self.name + ' login failed')
-            return None
+            return False
         self.id = str(message["logged_in_user"]["pk"])
         self.rank_token = "%s_%s" % (
             self.id, self.guid)
+        self.logged_in = True
         logging.getLogger('main').info(self.name + ' successful authorization')
+        return True
 
     def save(self):
         if not os.path.exists(users_folder_path):

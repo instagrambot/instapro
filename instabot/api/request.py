@@ -17,14 +17,17 @@ class Request(object):
                     config.API_URL + endpoint, data=cls.generate_signature(post))
             else:  # GET
                 response = session.get(config.API_URL + endpoint)
+
             if response.status_code == 200:
                 log.debug("Request OK! Response: " + response.text)
-                # print(response)
                 return json.loads(response.text)
             else:
+                try:
+                    s = json.loads(response.text)
+                except:
+                    s = ""
                 log.error("Request return " +
-                          str(response.status_code) + " error!")
-                print(response.text)
+                          str(response.status_code) + " error: " + str(response))
                 if response.status_code == 429:
                     sleep_minutes = 5
                     log.warning(
@@ -32,7 +35,7 @@ class Request(object):
                     time.sleep(sleep_minutes * 60)
                 return None
         except Exception as e:
-            log.error(str(e))
+            log.error("Request error: " + str(e))
             return None
 
     @staticmethod
