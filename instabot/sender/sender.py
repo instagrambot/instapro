@@ -1,0 +1,2 @@
+class Sender(object):
+    pass
