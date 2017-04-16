@@ -6,7 +6,7 @@ import uuid
 import requests
 import logging
 from .. import config
-from ..api import request
+from ..api.request import Request
 
 users_folder_path = config.PROJECT_FOLDER_PATH + config.USERS_FOLDER_NAME
 
@@ -65,7 +65,7 @@ class User(object):
             'password': self.password,
             'login_attempt_count': '0'}
 
-        message = request.send(
+        message = Request.send(
             self.session, 'accounts/login/', json.dumps(data))
         if message is None:
             logging.getLogger('main').info(self.name + ' login failed')
