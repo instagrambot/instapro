@@ -16,7 +16,7 @@ class UserController(object):
         for user_path in os.listdir(users_folder_path):
             if user_path.endswith('.user'):
                 username = user_path[:-5]
-                self.users.append(self.load(username))
+                self.users.append(self.load_user(username))
 
     def load_user(self, name):
         input_path = users_folder_path + "%s.user" % name
