@@ -1,3 +1,3 @@
-from .parser import Parser
+from .getter import Getter
 
-assert Parser  # silence pyflakes
+assert Getter  # silence pyflakes

@@ -7,7 +7,7 @@ from instabot.api import api
 from instabot.user.user_controller import UserController
 
 
-class Parser(object):
+class Getter(object):
 
     def __init__(self):
         self.controller = UserController()
@@ -38,7 +38,7 @@ class Parser(object):
     def _get_user_followers(self, user_id, max_id=''):
         user = self.controller.current
         if user is None:
-            raise ("No User instance was passed")
+            raise Exception("No User instance was passed")
         resp = api.get_user_followers(user, user_id, maxid=max_id)
         if resp is None:
             raise ("Broken User")

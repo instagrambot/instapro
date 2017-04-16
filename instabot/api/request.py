@@ -6,7 +6,7 @@ import logging
 from .. import config
 
 
-class Request:
+class Request(object):
     @classmethod
     def send(cls, session, endpoint, post=None):
         log = logging.getLogger('main')

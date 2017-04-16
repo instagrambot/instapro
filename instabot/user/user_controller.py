@@ -7,7 +7,7 @@ from .. import config
 users_folder_path = config.PROJECT_FOLDER_PATH + config.USERS_FOLDER_NAME
 
 
-class UserController:
+class UserController(object):
     instance = None
 
     def __new__(cls):
