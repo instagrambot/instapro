@@ -28,10 +28,10 @@ def send(session, endpoint, post=None):
                 log.warning(
                     "That means 'too many requests'. I'll go to sleep for %d minutes." % sleep_minutes)
                 time.sleep(sleep_minutes * 60)
-            return
+            return None
     except Exception as e:
         log.error(str(e))
-        return
+        return None
 
 
 def generate_signature(data):

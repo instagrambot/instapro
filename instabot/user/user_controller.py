@@ -2,7 +2,7 @@ import os
 import pickle
 import random
 
-from instabot.new import config
+from .. import config
 
 users_folder_path = config.PROJECT_FOLDER_PATH + config.USERS_FOLDER_NAME
 
@@ -12,12 +12,16 @@ class UserController(object):
         self.users = []
         self.current_user = None
 
-    def load_all_users(self):
+    @classmethod
+    def load_all_users(cls):
+        users = []
         for user_path in os.listdir(users_folder_path):
             if user_path.endswith('.user'):
                 username = user_path[:-5]
-                self.users.append(self.load(username))
+                users.append(cls.load_user(username))
+        return filter(None, users)
 
+    @classmethod
     def load_user(self, name):
         input_path = users_folder_path + "%s.user" % name
         if not os.path.exists(input_path):
@@ -26,7 +30,7 @@ class UserController(object):
 
         with open(input_path, 'rb') as finput:
             try:
-                self.current_user = pickle.load(finput)
+                return pickle.load(finput)
             except:
                 #warnings.warn("%s is corrupted." % username)
                 # warn

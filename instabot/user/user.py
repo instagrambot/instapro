@@ -67,7 +67,9 @@ class User(object):
 
         message = request.send(
             self.session, 'accounts/login/', json.dumps(data))
-
+        if message is None:
+            logging.getLogger('main').info(self.name + ' login failed')
+            return None
         self.id = str(message["logged_in_user"]["pk"])
         self.rank_token = "%s_%s" % (
             self.id, self.guid)
