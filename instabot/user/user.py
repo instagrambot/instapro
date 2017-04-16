@@ -1,17 +1,17 @@
-import os
-import hmac
-import pickle
-import warnings
+import hashlib
 import json
-
-from enum import IntEnum
-
+import os
+import pickle
+import uuid
+import requests
+import logging
 from .. import config
+from ..api import request
 
 users_folder_path = config.PROJECT_FOLDER_PATH + config.USERS_FOLDER_NAME
 
+
 class Dotdict(dict):
-    """dot.notation access to dictionary attributes"""
     __getattr__ = dict.get
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
@@ -31,65 +31,59 @@ class Dotdict(dict):
 
 
 class User(object):
-    """ Class to store all user's properties """
-
     def __init__(self, username, password):
-        self.username = username
+        self.name = username
         self.password = password
-        self.api_is_set = False
-        self.bot_is_set = False
-        self.isLoggedIn = False
+        self.device_uuid = str(uuid.uuid4())
+        self.guid = str(uuid.uuid4())
+        self.device_id = 'android-' + \
+            hashlib.md5(username.encode('utf-8')).hexdigest()[:16]
+        self.session = requests.Session()
+        self.id = None
         self.counters = Dotdict({})
         self.limits = Dotdict({})
         self.delays = Dotdict({})
         self.filters = Dotdict({})
+
+        self.login()
+        self.save()
+
+    def login(self):
+        self.session.headers.update({
+            'Connection': 'close',
+            'Accept': '*/*',
+            'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'Cookie2': '$Version=1',
+            'Accept-Language': 'en-US',
+            'User-Agent': config.USER_AGENT})
+
+        data = {
+            'phone_id': self.device_uuid,
+            'username': self.name,
+            'guid': self.guid,
+            'device_id': self.device_id,
+            'password': self.password,
+            'login_attempt_count': '0'}
+
+        message = request.send(
+            self.session, 'accounts/login/', json.dumps(data))
+
+        self.id = str(message["logged_in_user"]["pk"])
+        self.rank_token = "%s_%s" % (
+            self.id, self.guid)
+        logging.getLogger('main').info(self.name + ' successful authorization')
 
     def save(self):
         if not os.path.exists(users_folder_path):
             if not os.path.exists(config.PROJECT_FOLDER_PATH):
                 os.makedirs(config.PROJECT_FOLDER_PATH)
             os.makedirs(users_folder_path)
-        output_path = users_folder_path + "%s.user" % self.username
+        output_path = users_folder_path + "%s.user" % self.name
         with open(output_path, 'wb') as foutput:
             pickle.dump(self, foutput)
 
-    @classmethod
-    def load(cls, username):
-        """ returns the User class instance by username """
-        input_path = users_folder_path + "%s.user" % username
-        if os.path.exists(input_path):
-            with open(input_path, 'rb') as finput:
-                try:
-                    dumped_user = pickle.load(finput)
-                    return dumped_user
-                except:
-                    warnings.warn("%s is corrupted." % username)
-                    cls.delete(username)
-                    return None
-        else:
-            warnings.warn("No user found")
-            return None
-
-    @classmethod
-    def load_all(cls):
-        """ returns a list of all User instances """
-        users = []
-        for user_path in os.listdir(users_folder_path):
-            if user_path[-5:] == ".user":
-                username = user_path[:-5]
-                users.append(User.load(username))
-        return users
-
-    @classmethod
-    def get_all_users(cls):
-        """ returns a list of usernames """
-        if not os.path.exists(users_folder_path):
-            return []
-        return [path[:-5] for path in os.listdir(users_folder_path) if path[-5:] == ".user"]
-
-    @staticmethod
-    def delete(username):
-        input_path = users_folder_path + "%s.user" % username
+    def delete(self):
+        input_path = users_folder_path + "%s.user" % self.name
         if os.path.exists(input_path):
             os.remove(input_path)
 

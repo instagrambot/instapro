@@ -1,4 +1,6 @@
-from instabot import User, api
+from user import User
+from user_controller import UserController
+from api import api
 import logging.config
 import unittest
 
@@ -12,6 +14,6 @@ class TestUser(unittest.TestCase):
         print(api.get_user_followers(user, user.id))
 
 if __name__ == '__main__':
-    logging.config.fileConfig('instabot/log.conf')
+    logging.config.fileConfig('log.conf')
     log = logging.getLogger('main')
     unittest.main()

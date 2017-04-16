@@ -5,8 +5,8 @@ import pickle
 import uuid
 import requests
 import logging
-from instabot.new import config
-from instabot.new.api import request
+from .. import config
+from .api import request
 
 users_folder_path = config.PROJECT_FOLDER_PATH + config.USERS_FOLDER_NAME
 
@@ -69,6 +69,8 @@ class User(object):
             self.session, 'accounts/login/', json.dumps(data))
 
         self.id = str(message["logged_in_user"]["pk"])
+        self.rank_token = "%s_%s" % (
+            self.id, self.guid)
         logging.getLogger('main').info(self.name + ' successful authorization')
 
     def save(self):

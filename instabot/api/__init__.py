@@ -1,3 +1,2 @@
-from .api import API
-
-assert API  # silence pyflakes
+from . import request
+from . import api
