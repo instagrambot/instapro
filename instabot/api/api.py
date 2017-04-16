@@ -1,8 +1,8 @@
 from instabot.api.request import Request
 
 
-def get_profile_data(user):
-    return Request.send(user.session, 'users/' + str(user.id) + '/info/')
+def get_user_info(user, user_id):
+    return Request.send(user.session, 'users/' + str(user_id) + '/info/')
 
 
 def get_user_feed(user, user_id, maxid='', minTimestamp=None):

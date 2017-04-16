@@ -44,31 +44,33 @@ class Getter(object):
         resp = api.get_user_followers(user, user_id, maxid=max_id)
         if resp is None:
             raise Exception("Broken User: %s" % user.name)
-        if not resp['big_list']:
+        if "next_max_id" not in resp or "big_list" in resp and not resp['big_list']:
             return (resp['users'], None)
         return (resp['users'], resp['next_max_id'])
 
-    # @error_handler
-    # @api_getter
-    # def _get_user_following(self, user_id, max_id="", api=None):
-    #     if api is None:
-    #         raise ("No API instance was passed")
-    #     if not api.getUserFollowings(user_id, maxid=max_id):
-    #         raise ("Broken API")
-    #     if not api.LastJson["big_list"]:
-    #         return (api.LastJson["users"], None)
-    #     return (api.LastJson["users"], api.LastJson["next_max_id"])
-    #
-    # @error_handler
-    # @api_getter
-    # def _get_user_info(self, user_id, api=None):
-    #     if api is None:
-    #         raise ("No API instance was passed")
-    #     if not api.getUsernameInfo(user_id):
-    #         raise ("Broken API")
-    #     if "user" in api.LastJson:
-    #         return api.LastJson["user"]
-    #     return None
+    @error_handler
+    @user_getter
+    def _get_user_following(self, user_id, max_id="", user=None):
+        if user is None:
+            raise Exception("No User instance was passed")
+        resp = api.get_user_following(user, user_id, maxid=max_id)
+        if resp is None:
+            raise Exception("Broken User")
+        if "next_max_id" not in resp or "big_list" in resp and not resp["big_list"]:
+            return (resp["users"], None)
+        return (resp["users"], resp["next_max_id"])
+
+    @error_handler
+    @user_getter
+    def _get_user_info(self, user_id, user=None):
+        if user is None:
+            raise Exception("No User instance was passed")
+        resp = api.get_user_info(user, user_id)
+        if resp is None:
+            raise Exception("Broken User")
+        if "user" in resp:
+            return resp["user"]
+        return None
 
     @error_handler
     @user_getter
@@ -114,16 +116,16 @@ class Getter(object):
             if max_id is None or total is not None and total < count:
                 break
 
-    # def get_user_info(self, user_id):
-    #     return self._get_user_info(user_id)
+    def user_info(self, user_id):
+        return self._get_user_info(user_id)
 
     def user_followers(self, user_id, total=None):
         """ generator to iterate over user's followers """
         return self.generator(self._get_user_followers, user_id, total=total)
 
-    # def user_following(self, user_id, total=None):
-    #     """ generator to iterate over user's following """
-    #     return self.generator(self._get_user_following, user_id, total)
+    def user_following(self, user_id, total=None):
+        """ generator to iterate over user's following """
+        return self.generator(self._get_user_following, user_id, total=total)
 
     def user_feed(self, user_id, total=None):
         """ generator to iterate over user feed """
