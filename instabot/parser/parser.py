@@ -3,19 +3,14 @@ import warnings
 from queue import Queue
 from tqdm import tqdm
 
-from .. import UserController, api
+from instabot.api import api
+from instabot.user.user_controller import UserController
 
 
 class Parser(object):
 
     def __init__(self):
-        users = UserController.load_all_users()
-        if len(users) == 0:
-            warnings.warn("PARSER: No users found.")
-            return None
-        self.queue = Queue()
-        for user in users:
-            self.queue.put(user)
+        self.controller = UserController()
 
     def user_getter(func):
         def debug_wrapper(*args, **kwargs):
@@ -34,21 +29,22 @@ class Parser(object):
             try:
                 return func(*args, **kwargs)
             except Exception as e:
-                warnings.warn("PARSER: " + str(e))
+                warnings.warn('PARSER: ' + str(e))
                 time.sleep(2)
         return error_handler_wrapper
 
     @error_handler
-    @user_getter
-    def _get_user_followers(self, user_id, max_id="", user=None):
+    #@user_getter
+    def _get_user_followers(self, user_id, max_id=''):
+        user = self.controller.current
         if user is None:
             raise ("No User instance was passed")
         resp = api.get_user_followers(user, user_id, maxid=max_id)
         if resp is None:
             raise ("Broken User")
-        if not resp["big_list"]:
-            return (resp["users"], None)
-        return (resp["users"], resp["next_max_id"])
+        if not resp['big_list']:
+            return (resp['users'], None)
+        return (resp['users'], resp['next_max_id'])
 
     # @error_handler
     # @api_getter

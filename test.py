@@ -1,6 +1,7 @@
 from instabot import User, api, Parser
 import logging.config
 import unittest
+from instabot.user.user_controller import UserController
 
 
 test_login, test_password = 'instabotproject', 'drcherryisagoodman'
@@ -20,6 +21,10 @@ class TestUser(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    logging.config.fileConfig('instabot/log.conf')
-    log = logging.getLogger('main')
-    unittest.main()
+
+    user1 = User('login', 'pass')
+
+    parser = Parser()
+    print(list(parser.user_followers(user1.id, total=3)))
+
+
