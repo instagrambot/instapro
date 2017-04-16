@@ -30,7 +30,7 @@ class Dotdict(dict):
         self.__dict__.update(d)
 
 
-class User():
+class User(object):
     def __init__(self, username, password):
         self.name = username
         self.password = password
