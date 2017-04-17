@@ -12,32 +12,20 @@ class Getter(object):
     def __init__(self):
         self.controller = UserController()
 
-    def user_getter(func):
-        def debug_wrapper(*args, **kwargs):
-            self = args[0]
-            while True:
-                user = self.controller.get_user
-                kwargs['user'] = user
-                try:
-                    res = func(*args, **kwargs)
-                    return res
-                except Exception as e:
-                    warnings.warn("GETTER:", str(e))
-                    time.sleep(5)
-                    continue
-        return debug_wrapper
-
     def error_handler(func):
         def error_handler_wrapper(*args, **kwargs):
-            try:
-                return func(*args, **kwargs)
-            except Exception as e:
-                warnings.warn('GETTER: ' + str(e))
-                time.sleep(2)
+            self = args[0]
+            while True:
+                kwargs['user'] = self.controller.get_user
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    warnings.warn('GETTER: ' + str(e))
+                    time.sleep(2)
+                    continue
         return error_handler_wrapper
 
     @error_handler
-    @user_getter
     def _get_user_followers(self, user_id, max_id='', user=None):
         if user is None:
             raise Exception("No User instance was passed")
@@ -49,7 +37,6 @@ class Getter(object):
         return (resp['users'], resp['next_max_id'])
 
     @error_handler
-    @user_getter
     def _get_user_following(self, user_id, max_id="", user=None):
         if user is None:
             raise Exception("No User instance was passed")
@@ -61,7 +48,6 @@ class Getter(object):
         return (resp["users"], resp["next_max_id"])
 
     @error_handler
-    @user_getter
     def _get_user_info(self, user_id, user=None):
         if user is None:
             raise Exception("No User instance was passed")
@@ -73,7 +59,6 @@ class Getter(object):
         return None
 
     @error_handler
-    @user_getter
     def _get_user_feed(self, user_id, max_id="", user=None):
         if user is None:
             raise Exception("No User instance was passed")
@@ -85,7 +70,6 @@ class Getter(object):
         return (resp["items"], resp["next_max_id"])
 
     @error_handler
-    @user_getter
     def _get_liked_media(self, max_id="", user=None):
         if user is None:
             raise Exception("No API instance was passed")
@@ -101,10 +85,12 @@ class Getter(object):
         max_id = ""
         count = 0
         while True:
+            if max_id is None or total is not None and total < count:
+                break
             if arg is not None:
                 resp = func(arg, max_id=max_id)
             else:
-                resp = func(max_id)
+                resp = func(max_id=max_id)
             if resp is None:
                 time.sleep(2)
                 continue
@@ -114,8 +100,6 @@ class Getter(object):
                 if total is not None and total < count:
                     break
                 yield item
-            if max_id is None or total is not None and total < count:
-                break
 
     def user_info(self, user_id):
         return self._get_user_info(user_id)
@@ -131,7 +115,7 @@ class Getter(object):
     def user_feed(self, user_id, total=None):
         """ generator to iterate over user feed """
         return self.generator(self._get_user_feed, user_id, total=total)
-    #
+
     def liked_media(self, total=None):
         """ generator to iterate over liked medias """
         return self.generator(self._get_liked_media, None, total=total)

@@ -20,5 +20,6 @@ def get_user_following(user, user_id, maxid=''):
     return Request.send(user.session,
                         'friendships/' + str(user_id) + '/following/?max_id=' + str(maxid) + '&rank_token=' + str(user.rank_token))
 
+
 def get_liked_media(user, maxid=''):
     return Request.send(user.session, 'feed/liked/?max_id=' + str(maxid))
