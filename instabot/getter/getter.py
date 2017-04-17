@@ -84,16 +84,17 @@ class Getter(object):
             return (resp["items"], None)
         return (resp["items"], resp["next_max_id"])
 
-    # @error_handler
-    # @api_getter
-    # def _get_liked_media(self, max_id="", api=None):
-    #     if api is None:
-    #         raise ("No API instance was passed")
-    #     if not api.getLikedMedia(max_id):
-    #         raise ("Broken API")
-    #     if not api.LastJson["more_available"]:
-    #         return (["items"], None)
-    #     return (api.LastJson["items"], api.LastJson["next_max_id"])
+    @error_handler
+    @user_getter
+    def _get_liked_media(self, max_id="", user=None):
+        if user is None:
+            raise Exception("No API instance was passed")
+        resp = api.get_liked_media(user, max_id)
+        if resp is None:
+            raise Exception("Broken API")
+        if "next_max_id" not in resp or "more_available" in resp and not resp["more_available"]:
+            return (resp["items"], None)
+        return (resp["items"], resp["next_max_id"])
 
     @staticmethod
     def generator(func, arg, total=None):
@@ -131,6 +132,6 @@ class Getter(object):
         """ generator to iterate over user feed """
         return self.generator(self._get_user_feed, user_id, total=total)
     #
-    # def liked_media(self, total=None):
-    #     """ generator to iterate over liked medias """
-    #     return self.generator(self._get_liked_media, None, total)
+    def liked_media(self, total=None):
+        """ generator to iterate over liked medias """
+        return self.generator(self._get_liked_media, None, total=total)
