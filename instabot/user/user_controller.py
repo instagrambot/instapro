@@ -60,7 +60,9 @@ class UserController(object):
             try:
                 user = pickle.load(finput)
                 if not user.logged_in:
-                    return None
+                    user.login()
+                    if not user.logged_in:
+                        return None
                 return user
             except:
                 warnings.warn("%s is corrupted." % name)

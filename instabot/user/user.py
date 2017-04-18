@@ -47,6 +47,7 @@ class User(object):
         self.filters = Dotdict({})
 
         if not self.login():
+            self.save()
             return None
         self.save()
 
@@ -71,6 +72,7 @@ class User(object):
             self.session, 'accounts/login/', json.dumps(data))
         if message is None:
             logging.getLogger('main').warning(self.name + ' login failed')
+            self.logged_in = False
             return False
         self.id = str(message["logged_in_user"]["pk"])
         self.rank_token = "%s_%s" % (self.id, self.guid)
