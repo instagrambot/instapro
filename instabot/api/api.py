@@ -1,8 +1,17 @@
 from instabot.api.request import Request
 
+def is_user_id(smth):
+    if str(smth).isdigit():
+        return True
+    return False
 
 def get_user_info(user, user_id):
-    return Request.send(user.session, 'users/' + str(user_id) + '/info/')
+    if is_user_id(user_id):
+        return Request.send(user.session,
+                            'users/' + str(user_id) + '/info/')
+    else:
+        return Request.send(user.session,
+                            'users/' + str(username) + '/usernameinfo/')
 
 
 def get_user_feed(user, user_id, maxid='', minTimestamp=None):
@@ -22,4 +31,10 @@ def get_user_following(user, user_id, maxid=''):
 
 
 def get_liked_media(user, maxid=''):
-    return Request.send(user.session, 'feed/liked/?max_id=' + str(maxid))
+    return Request.send(user.session,
+                        'feed/liked/?max_id=' + str(maxid))
+
+
+def search_location(user, query, maxid=''):
+    return Request.send(user.session,
+                        'fbsearch/places/?max_id=' + str(maxid) + '&rank_token=' + str(user.rank_token) + '&query=' + str(query))
