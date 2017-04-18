@@ -11,7 +11,7 @@ def get_user_info(user, user_id):
                             'users/' + str(user_id) + '/info/')
     else:
         return Request.send(user.session,
-                            'users/' + str(username) + '/usernameinfo/')
+                            'users/' + str(user_id) + '/usernameinfo/')
 
 
 def get_user_feed(user, user_id, maxid='', minTimestamp=None):
