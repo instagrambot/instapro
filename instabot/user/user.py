@@ -70,11 +70,10 @@ class User(object):
         message = Request.send(
             self.session, 'accounts/login/', json.dumps(data))
         if message is None:
-            logging.getLogger('main').info(self.name + ' login failed')
+            logging.getLogger('main').warning(self.name + ' login failed')
             return False
         self.id = str(message["logged_in_user"]["pk"])
-        self.rank_token = "%s_%s" % (
-            self.id, self.guid)
+        self.rank_token = "%s_%s" % (self.id, self.guid)
         self.logged_in = True
         logging.getLogger('main').info(self.name + ' successful authorization')
         return True
