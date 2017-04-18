@@ -1,5 +1,6 @@
 import os
 import pickle
+import warnings
 from queue import Queue
 
 from .. import config
@@ -52,7 +53,7 @@ class UserController(object):
     def load_user(self, name):
         input_path = users_folder_path + "%s.user" % name
         if not os.path.exists(input_path):
-            # warn
+            warnings.warn("%s not found." % name)
             return None
 
         with open(input_path, 'rb') as finput:
@@ -62,7 +63,6 @@ class UserController(object):
                     return None
                 return user
             except:
-                # warnings.warn("%s is corrupted." % username)
-                # warn
+                warnings.warn("%s is corrupted." % name)
                 os.remove(input_path)
                 return None
