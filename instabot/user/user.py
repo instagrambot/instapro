@@ -47,9 +47,7 @@ class User(object):
         self.filters = Dotdict({})
 
         if not self.login():
-            self.save()
             return None
-        self.save()
 
     def login(self):
         self.session.headers.update({
@@ -73,11 +71,13 @@ class User(object):
         if message is None:
             logging.getLogger('main').warning(self.name + ' login failed')
             self.logged_in = False
+            self.save()
             return False
         self.id = str(message["logged_in_user"]["pk"])
         self.rank_token = "%s_%s" % (self.id, self.guid)
         self.logged_in = True
         logging.getLogger('main').info(self.name + ' successful authorization')
+        self.save()
         return True
 
     def save(self):
