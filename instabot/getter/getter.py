@@ -16,7 +16,7 @@ class Getter(object):
         def error_handler_wrapper(*args, **kwargs):
             self = args[0]
             while True:
-                kwargs['user'] = self.controller.get_user
+                kwargs['user'] = self.controller.user
                 try:
                     return func(*args, **kwargs)
                 except Exception as e:
