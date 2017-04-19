@@ -13,7 +13,6 @@ def get_user_info(user, user_id):
         return Request.send(user.session,
                             'users/' + str(user_id) + '/usernameinfo/')
 
-
 def get_user_feed(user, user_id, maxid='', minTimestamp=None):
     return Request.send(user.session,
                         'feed/user/' + str(user_id) + '/?max_id=' + str(maxid) + '&min_timestamp=' + str(minTimestamp) +

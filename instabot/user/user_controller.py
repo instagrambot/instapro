@@ -31,11 +31,14 @@ class UserController(object):
                     self.queue.put(user)
 
     @property
-    def get_user(self):
+    def user(self):
         if not self.queue.empty():
             temp_user = self.queue.get()
             self.queue.put(temp_user)
             return temp_user
+        else:
+            print("empty accounts list")
+            exit(0)
 
     @property
     def main(self):

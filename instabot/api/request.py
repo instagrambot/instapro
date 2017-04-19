@@ -17,7 +17,6 @@ class Request(object):
                     config.API_URL + endpoint, data=cls.generate_signature(post))
             else:  # GET
                 response = session.get(config.API_URL + endpoint)
-
             if response.status_code == 200:
                 log.debug("Request OK! Response: " + response.text)
                 return json.loads(response.text)
