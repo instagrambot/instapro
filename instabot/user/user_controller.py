@@ -42,8 +42,12 @@ class UserController(object):
 
     @property
     def main(self):
-        # TODO: check if main_user is set
-        return self.main_user
+        if self.main_user is not None:
+            return self.main_user
+        warnings.warn("No main user was setted. Load it with "
+                      "controller.main = controller.load_user(username). "
+                      "If you use Sender class, the Controller class is in "
+                      "send.controller.")
 
     @main.setter
     def main(self, user):
