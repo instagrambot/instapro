@@ -2,6 +2,7 @@ import time
 import json
 import warnings
 
+from random import random
 
 from ..api.request import Request
 from ..getter import Getter
@@ -40,10 +41,13 @@ class Sender(object):
 
         return True
 
-    def can_like(self, target=None):
+    def can_like(self, md=None):
         # check filter
         # check limit
         # check counters
+        if md is not None:
+            if "has_liked" in md and md["has_liked"]:
+                return False
         return True
 
     def follow_followers(self, main_target, total=None):
@@ -51,7 +55,7 @@ class Sender(object):
             main_target = self.get.user_info(main_target)['pk']
         return self.follow_users(self.get.user_followers(main_target, total=total))
 
-    def follow_following(self, main_target):
+    def follow_following(self, main_target, total=None):
         if not str(main_target).isdigit():
             main_target = self.get.user_info(main_target)['pk']
         return self.follow_users(self.get.user_following(main_target, total=total))
@@ -65,5 +69,24 @@ class Sender(object):
 
     def follow(self, target):
         if self.can_follow(target):
-            print(target['username'] + 'was followed.')
+            print("follow %s" % target['username'])
             return Request.send(self.controller.main.session, 'friendships/create/' + str(target['pk']) + '/', '{}')
+        return False
+
+    def like(self, media):
+        if self.can_like(media):
+            print("like %s's media" % media['user']['username'])
+            return Request.send(self.controller.main.session, 'media/' + str(media['pk']) + '/like/', '{}')
+        return False
+
+    def like_medias(self, medias):
+        for media in medias:
+            if self.like(media) is None:
+                warnings.warn("Error while liking %s's media." %
+                              media['user']['pk'])
+        return False  # exitcode 0 - no errors
+
+    def like_geo_medias(self, location, total=None):
+        if not str(location).isdigit():
+            location = self.get.geo_id(location)
+        return self.like_medias(self.get.geo_medias(location, total=total))

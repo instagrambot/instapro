@@ -59,6 +59,18 @@ class Getter(object):
         return None
 
     @error_handler
+    def _get_geo_id(self, location_name, user=None):
+        if user is None:
+            raise Exception("No User instance was passed")
+        resp = api.search_location(user, location_name)
+        if resp is None:
+            raise Exception("Broken User")
+        try:
+            return resp["items"][0]['location']['pk']
+        except:
+            return None
+
+    @error_handler
     def _get_user_feed(self, user_id, max_id="", user=None):
         if user is None:
             raise Exception("No User instance was passed")
@@ -74,6 +86,17 @@ class Getter(object):
         if user is None:
             raise Exception("No API instance was passed")
         resp = api.get_liked_media(user, max_id)
+        if resp is None:
+            raise Exception("Broken API")
+        if "next_max_id" not in resp or "more_available" in resp and not resp["more_available"]:
+            return (resp["items"], None)
+        return (resp["items"], resp["next_max_id"])
+
+    @error_handler
+    def _get_geo_medias(self, location_id, max_id="", user=None):
+        if user is None:
+            raise Exception("No API instance was passed")
+        resp = api.get_geo_feed(user, location_id, max_id)
         if resp is None:
             raise Exception("Broken API")
         if "next_max_id" not in resp or "more_available" in resp and not resp["more_available"]:
@@ -119,3 +142,10 @@ class Getter(object):
     def liked_media(self, total=None):
         """ generator to iterate over liked medias """
         return self.generator(self._get_liked_media, None, total=total)
+
+    def geo_medias(self, location_id, total=None):
+        """ generator to iterate over geo medias """
+        return self.generator(self._get_geo_medias, location_id, total=total)
+
+    def geo_id(self, location_name):
+        return self._get_geo_id(location_name)

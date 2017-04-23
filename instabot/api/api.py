@@ -1,17 +1,21 @@
 from instabot.api.request import Request
 
-def is_user_id(smth):
+
+def is_id(smth):
+    ''' checks if input string is a number '''
     if str(smth).isdigit():
         return True
     return False
 
+
 def get_user_info(user, user_id):
-    if is_user_id(user_id):
+    if is_id(user_id):
         return Request.send(user.session,
                             'users/' + str(user_id) + '/info/')
-    else:
+    else:  # username was passed
         return Request.send(user.session,
                             'users/' + str(user_id) + '/usernameinfo/')
+
 
 def get_user_feed(user, user_id, maxid='', minTimestamp=None):
     return Request.send(user.session,
@@ -34,6 +38,11 @@ def get_liked_media(user, maxid=''):
                         'feed/liked/?max_id=' + str(maxid))
 
 
-def search_location(user, query, maxid=''):
+def search_location(user, query):
     return Request.send(user.session,
-                        'fbsearch/places/?max_id=' + str(maxid) + '&rank_token=' + str(user.rank_token) + '&query=' + str(query))
+                        'fbsearch/places/?rank_token=' + str(user.rank_token) + '&query=' + str(query))
+
+
+def get_geo_feed(user, location_id, maxid=''):
+    return Request.send(user.session,
+                        'feed/location/' + str(location_id) + '/?max_id=' + str(maxid) + '&rank_token=' + user.rank_token + '&ranked_content=true&')
