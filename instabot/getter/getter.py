@@ -76,7 +76,8 @@ class Getter(object):
             raise Exception("No User instance was passed")
         resp = api.get_user_feed(user, user_id, maxid=max_id)
         if resp is None:
-            raise Exception("Broken User: %s" % user.name)
+            # just user is private
+            return ([], None)
         if "next_max_id" not in resp or "more_available" in resp and not resp["more_available"]:
             return (resp["items"], None)
         return (resp["items"], resp["next_max_id"])
@@ -125,6 +126,7 @@ class Getter(object):
                 yield item
 
     def user_info(self, user_id):
+        """ returns dict with user's info. You can pass as username as user_id. """
         return self._get_user_info(user_id)
 
     def user_followers(self, user_id, total=None):
@@ -139,9 +141,10 @@ class Getter(object):
         """ generator to iterate over user feed """
         return self.generator(self._get_user_feed, user_id, total=total)
 
-    def liked_media(self, total=None):
-        """ generator to iterate over liked medias """
-        return self.generator(self._get_liked_media, None, total=total)
+    # TODO: make this method iterate over main user's liked media
+    # def liked_media(self, total=None):
+    #     """ generator to iterate over liked medias """
+    #     return self.generator(self._get_liked_media, None, total=total)
 
     def geo_medias(self, location_id, total=None):
         """ generator to iterate over geo medias """
