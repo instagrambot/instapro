@@ -31,7 +31,7 @@ class Request(object):
                         return None
                 except:
                     error = str(response.text)
-                log.error("Request return " +
+                    log.error("Request return " +
                           str(response.status_code) + " error: " + error)
                 if response.status_code == 429:
                     sleep_minutes = 5
