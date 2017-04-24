@@ -1,5 +1,6 @@
 import time
 import warnings
+from random import random
 from queue import Queue
 from tqdm import tqdm
 
@@ -21,7 +22,7 @@ class Getter(object):
                     return func(*args, **kwargs)
                 except Exception as e:
                     warnings.warn('GETTER: ' + str(e))
-                    time.sleep(2)
+                    time.sleep(60 * random())
                     continue
         return error_handler_wrapper
 
@@ -109,6 +110,7 @@ class Getter(object):
         max_id = ""
         count = 0
         while True:
+            time.sleep(0.5 * random())
             if max_id is None or total is not None and total < count:
                 break
             if arg is not None:
@@ -116,7 +118,7 @@ class Getter(object):
             else:
                 resp = func(max_id=max_id)
             if resp is None:
-                time.sleep(2)
+                time.sleep(5 * random())
                 continue
             items, max_id = resp
             for item in items:
@@ -127,6 +129,7 @@ class Getter(object):
 
     def user_info(self, user_id):
         """ returns dict with user's info. You can pass as username as user_id. """
+        time.sleep(0.5 * random())
         return self._get_user_info(user_id)
 
     def user_followers(self, user_id, total=None):
