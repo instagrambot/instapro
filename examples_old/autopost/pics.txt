@@ -1,3 +1,0 @@
-./pics/1 First test.jpg
-
-./pics/2 Second test.jpg
