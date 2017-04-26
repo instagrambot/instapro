@@ -46,3 +46,8 @@ def search_location(user, query):
 def get_geo_feed(user, location_id, maxid=''):
     return Request.send(user.session,
                         'feed/location/' + str(location_id) + '/?max_id=' + str(maxid) + '&rank_token=' + user.rank_token + '&ranked_content=true&')
+
+
+def get_hashtag_feed(user, hashtag, maxid=''):
+    return Request.send(user.session,
+                        'feed/tag/' + str(hashtag) + '/?max_id=' + str(maxid) + '&rank_token=' + user.rank_token + '&ranked_content=true&')

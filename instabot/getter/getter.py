@@ -105,6 +105,17 @@ class Getter(object):
             return (resp["items"], None)
         return (resp["items"], resp["next_max_id"])
 
+    @error_handler
+    def _get_hashtag_medias(self, hashtag, max_id="", user=None):
+        if user is None:
+            raise Exception("No API instance was passed")
+        resp = api.get_hashtag_feed(user, hashtag, max_id)
+        if resp is None:
+            raise Exception("Broken API")
+        if "next_max_id" not in resp or "more_available" in resp and not resp["more_available"]:
+            return (resp["items"], None)
+        return (resp["items"], resp["next_max_id"])
+
     @staticmethod
     def generator(func, arg, total=None):
         max_id = ""
@@ -152,6 +163,10 @@ class Getter(object):
     def geo_medias(self, location_id, total=None):
         """ generator to iterate over geo medias """
         return self.generator(self._get_geo_medias, location_id, total=total)
+
+    def hashtag_medias(self, hashtag, total=None):
+        """ generator to iterate over hashtag medias """
+        return self.generator(self._get_hashtag_medias, hashtag, total=total)
 
     def geo_id(self, location_name):
         return self._get_geo_id(location_name)
