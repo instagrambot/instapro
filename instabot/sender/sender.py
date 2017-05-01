@@ -46,6 +46,10 @@ class Sender(object):
 
         return True
 
+    def can_unfollow(self, usr=None):
+        # check whitelist
+        return True
+
     def can_like(self, md=None):
         # check filter
         # check limit
@@ -81,6 +85,25 @@ class Sender(object):
             if 'follows' not in self.main.counters:
                 self.main.counters.follows = 0
             self.main.counters.follows += 1
+            return ret
+        return False
+
+    def unfollow_users(self, targets, delay=15):
+        for target in tqdm(targets, desc='unfollow users'):
+            res = self.unfollow(target)
+            if res is None:
+                warnings.warn('Error while unfollowing %s.' % target['username'])
+            if res:
+                self.sleep(delay)
+        self.main.save()
+        return False  # exitcode 0 - no errors
+
+    def unfollow(self, target):
+        if self.can_unfollow(target):
+            ret = Request.send(self.controller.main.session, 'friendships/destroy/' + str(target['pk']) + '/', '{}')
+            if 'unfollows' not in self.main.counters:
+                self.main.counters.unfollows = 0
+            self.main.counters.unfollows += 1
             return ret
         return False
 
