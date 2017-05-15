@@ -1,5 +1,11 @@
+import sys
 from instabot.db_helper import DBHelper
-from queue import Queue
+
+is_py2 = sys.version[0] == '2'
+if is_py2:
+    from Queue import Queue
+else:
+    from queue import Queue
 
 from .. import config
 
