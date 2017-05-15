@@ -1,7 +1,13 @@
 import os
 import pickle
 import warnings
-from queue import Queue
+import sys
+
+is_py2 = sys.version[0] == '2'
+if is_py2:
+    from Queue import Queue
+else:
+    from queue import Queue
 
 from .. import config
 

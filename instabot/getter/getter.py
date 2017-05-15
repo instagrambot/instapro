@@ -1,15 +1,19 @@
 import time
 import warnings
+import sys
 from random import random
-from queue import Queue
 from tqdm import tqdm
 
+is_py2 = sys.version[0] == '2'
+if is_py2:
+    from Queue import Queue
+else:
+    from queue import Queue
 from instabot.api import api
 from instabot.user.user_controller import UserController
 
 
 class Getter(object):
-
     def __init__(self):
         self.controller = UserController()
 
@@ -24,6 +28,7 @@ class Getter(object):
                     warnings.warn('GETTER: ' + str(e))
                     time.sleep(60 * random())
                     continue
+
         return error_handler_wrapper
 
     @error_handler
