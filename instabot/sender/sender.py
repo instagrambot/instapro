@@ -30,10 +30,12 @@ class Sender(object):
         time.sleep(delay * 0.5 + random() * delay)
 
     def can_follow(self, usr=None):
+        if usr is None:
+            return False
         # check filter
         # check limit
         # check counters
-        if usr is not None and isinstance(usr, dict):
+        if isinstance(usr, dict):
             if not hasattr(self.main, 'following'):
                 self.main.following = set(
                     [usr['pk'] for usr in self.get.user_following(self.main.id)])
@@ -51,10 +53,12 @@ class Sender(object):
         return True
 
     def can_like(self, md=None):
+        if md is None:
+            return False
         # check filter
         # check limit
         # check counters
-        if md is not None:
+        if isinstance(md, dict):
             if 'has_liked' in md and md['has_liked']:
                 return False
         return True
@@ -132,3 +136,6 @@ class Sender(object):
         if not str(location).isdigit():
             location = self.get.geo_id(location)
         return self.like_medias(self.get.geo_medias(location, total=total), delay=delay)
+
+    def like_hashtag_medias(self, hashtag, total=None, delay=5):
+        return self.like_medias(self.get.hashtag_medias(hashtag, total=total), delay=delay)
