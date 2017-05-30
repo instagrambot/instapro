@@ -6,7 +6,7 @@ from tqdm import tqdm
 sys.path.append('../../../')
 from instabot import User, Sender
 
-main_username = "ohld" # this user should be logger to instapro earlier
+main_username = "ohld" # this user should be logged to instapro earlier
 send = Sender(main_username)
 
 with open("hashtags.txt", "r") as f:
@@ -14,6 +14,8 @@ with open("hashtags.txt", "r") as f:
 
 with open("geotags.txt", "r") as f:
     locations = [x.strip() for x in f.readlines()]
+
+time.sleep(random() * 10 * 60) # 10 minutes sleep
 
 for location in tqdm(locations, desc="locations"):
     send.like_geo_medias(location, total=10, delay=15)
