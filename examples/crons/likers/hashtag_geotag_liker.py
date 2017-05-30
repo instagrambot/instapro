@@ -1,5 +1,6 @@
 import sys
 import time
+from random import random
 from tqdm import tqdm
 
 sys.path.append('../../../')
@@ -17,7 +18,7 @@ with open("geotags.txt", "r") as f:
 for location in tqdm(locations, desc="locations"):
     send.like_geo_medias(location, total=10, delay=15)
 
-time.sleep(10 * 60) # 10 minutes between locations and hashtags
+time.sleep(random() * 10 * 60) # 10 minutes between locations and hashtags
 
 for hashtag in tqdm(hashtags, desc="hashtags"):
     send.like_hashtag_medias(hashtag, total=10, delay=15)
