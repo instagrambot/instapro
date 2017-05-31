@@ -9,10 +9,10 @@ from instabot import User, Sender
 main_username = "ohld" # this user should be logged to instapro earlier
 send = Sender(main_username)
 
-with open("hashtags.txt", "r") as f:
+with open("hashtags.txt", "r", encoding='utf-8') as f:
     hashtags = [x.strip() for x in f.readlines()]
 
-with open("geotags.txt", "r") as f:
+with open("geotags.txt", "r", encoding='utf-8') as f:
     locations = [x.strip() for x in f.readlines()]
 
 time.sleep(random() * 10 * 60) # 10 minutes sleep
