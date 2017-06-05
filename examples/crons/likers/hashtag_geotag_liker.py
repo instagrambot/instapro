@@ -15,7 +15,7 @@ with open("hashtags.txt", "r", encoding='utf-8') as f:
 with open("geotags.txt", "r", encoding='utf-8') as f:
     locations = [x.strip() for x in f.readlines()]
 
-time.sleep(random() * 10 * 60) # 10 minutes sleep
+time.sleep(random() * 1 * 60) # 1 minute sleep
 
 for location in tqdm(locations, desc="locations"):
     send.like_geo_medias(location, total=10, delay=15)
