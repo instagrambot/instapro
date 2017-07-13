@@ -85,7 +85,8 @@ class Sender(object):
 
     def follow(self, target):
         if self.can_follow(target):
-            ret = Request.send(self.controller.main.session, 'friendships/create/' + str(target['pk']) + '/', '{}')
+            ret = Request.send(self.controller.main.session, 'friendships/create/' + str(target['user']['pk']) + '/',
+                               '{}')
             if 'follows' not in self.main.counters:
                 self.main.counters.follows = 0
             self.main.counters.follows += 1
@@ -132,6 +133,17 @@ class Sender(object):
         self.main.save()
         return False  # exitcode 0 - no errors
 
+    def follow_medias(self, medias, delay=15):
+        for media in tqdm(medias, 'follow medias'):
+            res = self.follow(media)
+            if res is None:
+                warnings.warn(
+                    "Error while following %s's media." % media['user']['username'])
+            if res:
+                self.sleep(delay)
+        self.main.save()
+        return False  # exitcode 0 - no errors
+
     def like_geo_medias(self, location, total=None, delay=5):
         if not str(location).isdigit():
             location = self.get.geo_id(location)
@@ -139,3 +151,6 @@ class Sender(object):
 
     def like_hashtag_medias(self, hashtag, total=None, delay=5):
         return self.like_medias(self.get.hashtag_medias(hashtag, total=total), delay=delay)
+
+    def follow_hashtag_medias(self, hashtag, total=None, delay=15):
+        return self.follow_medias(self.get.hashtag_medias(hashtag, total=total), delay=delay)
