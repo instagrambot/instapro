@@ -2,7 +2,5 @@ mipt
 мфти
 физтех
 bitcoin
-ethereum
-vsco
-love
-linkinpark
+beauty
+trade
