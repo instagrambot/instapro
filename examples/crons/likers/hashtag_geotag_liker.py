@@ -18,9 +18,9 @@ with open("geotags.txt", "r", encoding='utf-8') as f:
 time.sleep(random() * 1 * 60) # 1 minute sleep
 
 for location in tqdm(locations, desc="locations"):
-    send.like_geo_medias(location, total=10, delay=15)
+    send.like_geo_medias(location, total=10, delay=20)
 
 time.sleep(random() * 10 * 60) # 10 minutes between locations and hashtags
 
 for hashtag in tqdm(hashtags, desc="hashtags"):
-    send.like_hashtag_medias(hashtag, total=10, delay=15)
+    send.like_hashtag_medias(hashtag, total=10, delay=20)
