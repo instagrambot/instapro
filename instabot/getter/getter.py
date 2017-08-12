@@ -2,7 +2,6 @@ import time
 import warnings
 import sys
 from random import random
-from tqdm import tqdm
 
 is_py2 = sys.version[0] == '2'
 if is_py2:
@@ -38,7 +37,7 @@ class Getter(object):
         resp = api.get_user_followers(user, user_id, maxid=max_id)
         if resp is None:
             raise Exception("Broken User: %s" % user.name)
-        if "next_max_id" not in resp or "big_list" in resp and not resp['big_list']:
+        if "next_max_id" not in resp: # or "big_list" in resp and not resp['big_list']:
             return (resp['users'], None)
         return (resp['users'], resp['next_max_id'])
 
@@ -49,7 +48,7 @@ class Getter(object):
         resp = api.get_user_following(user, user_id, maxid=max_id)
         if resp is None:
             raise Exception("Broken User")
-        if "next_max_id" not in resp or "big_list" in resp and not resp["big_list"]:
+        if "next_max_id" not in resp: # or "big_list" in resp and not resp["big_list"]:
             return (resp["users"], None)
         return (resp["users"], resp["next_max_id"])
 
