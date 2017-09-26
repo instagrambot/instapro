@@ -106,3 +106,4 @@ accounts/
 
 # IDE temp
 .idea/
+examples/crons/.DS_Store
